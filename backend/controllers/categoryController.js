@@ -1,14 +1,16 @@
 import Category from "../models/Category.js";
 import MenuItem from "../models/MenuItem.js";
 
-
 export const getCategories = async (req, res) => {
   try {
-        const categories = await Category.find().sort({ createdAt: -1 });
-        if (!categories || categories.length === 0) 
-            return res.status(404).json({
-        message: "Category List is empty", success: false, error: true})
-    res.status(200).json({
+    const categories = await Category.find().sort({ createdAt: -1 });
+    if (!categories || categories.length === 0)
+      return res.status(404).json({
+        message: "Category List is empty",
+        success: false,
+        error: true,
+      });
+    return res.status(200).json({
       success: true,
       data: { categories },
     });
@@ -21,24 +23,29 @@ export const getCategories = async (req, res) => {
   }
 };
 
-
 export const createCategory = async (req, res) => {
   try {
-    const category = new Category(req.body);
-    await category.save();
-
-    res.status(201).json({
-      success: true,
-      message: "Category created successfully",
-      data: { category },
-    });
-  } catch (error) {
-    if (error.code === 11000) {
+    const { name } = req.body;
+    if (!name)
+      return res.status(400).json({
+        success: false,
+        message: "Category name is required",
+      });
+    const existingCategory = await Category.findOne({ name });
+    if (existingCategory) {
       return res.status(400).json({
         success: false,
         message: "Category with this name already exists",
       });
     }
+    const category = await Category.create({ name });
+
+    return res.status(201).json({
+      success: true,
+      message: "Category created successfully",
+      data: { category },
+    });
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Failed to create category",
@@ -47,16 +54,31 @@ export const createCategory = async (req, res) => {
   }
 };
 
-
 export const updateCategory = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const category = await Category.findByIdAndUpdate(id, req.body, {
+      const { id } = req.params;
+      const { name } = req.body;
+     if (!id) 
+        return res.status(400).json({
+          success: false,
+          message: "Category ID is required",
+        });
+        if(!name)
+          return res.status(400).json({
+            success: false,
+            message: "Category name is required",
+          });
+      const existingCategory = await Category.findOne({ name });
+      if (existingCategory) {
+        return res.status(400).json({
+          success: false,
+          message: "Category with this name already exists",
+        });
+      }
+    const category = await Category.findByIdAndUpdate(id, { name }, {
       new: true,
-      runValidators: true,
     });
-
+      
     if (!category) {
       return res.status(404).json({
         success: false,
@@ -77,7 +99,6 @@ export const updateCategory = async (req, res) => {
     });
   }
 };
-
 
 export const deleteCategory = async (req, res) => {
   try {
@@ -113,4 +134,3 @@ export const deleteCategory = async (req, res) => {
     });
   }
 };
-
