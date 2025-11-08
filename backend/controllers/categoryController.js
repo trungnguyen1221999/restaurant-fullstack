@@ -103,7 +103,11 @@ export const updateCategory = async (req, res) => {
 export const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
-
+    if (!id) 
+      return res.status(400).json({
+        success: false,
+        message: "Category ID is required",
+      });
     // Check if category has menu items
     const itemCount = await MenuItem.countDocuments({ category: id });
     if (itemCount > 0) {
