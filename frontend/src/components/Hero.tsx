@@ -101,7 +101,7 @@ const Hero = () => {
           </div>
           <div className="flex items-center gap-2 text-white/80">
             <MapPin className="w-5 h-5 text-primary" />
-            <span className="text-sm">Downtown Location</span>
+            <span className="text-sm">Kauhajoki</span>
           </div>
         </div>
 
