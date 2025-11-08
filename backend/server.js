@@ -7,12 +7,14 @@ import { connectDB } from "./config/database.js";
 import menuRoutes from "./routes/menuRoutes.js";
 import reservationRoutes from "./routes/reservationRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import cloudinaryConfig from "./config/cloudinary.js";
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 
 // Middleware
 app.use(
@@ -64,3 +66,5 @@ const startServer = async () => {
 };
 
 startServer();
+cloudinaryConfig();
+

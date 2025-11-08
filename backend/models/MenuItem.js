@@ -24,8 +24,8 @@ const menuItemSchema = new mongoose.Schema(
       ref: "Category",
       required: [true, "Category is required"],
     },
-    image: {
-      type: String,
+    images: {
+      type: [String],
       required: [true, "Image is required"],
       trim: true,
     },
