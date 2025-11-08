@@ -1,8 +1,6 @@
 import MenuItem from "../models/MenuItem.js";
 
-// @desc    Get all menu items
-// @route   GET /api/menu
-// @access  Public
+
 export const getMenuItems = async (req, res) => {
   try {
     const {

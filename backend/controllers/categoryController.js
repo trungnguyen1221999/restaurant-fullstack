@@ -1,31 +1,14 @@
 import Category from "../models/Category.js";
 import MenuItem from "../models/MenuItem.js";
 
-// @desc    Get all categories
-// @route   GET /api/categories
-// @access  Public
+
 export const getCategories = async (req, res) => {
   try {
-    const { includeInactive = false } = req.query;
-
-    const query = includeInactive === "true" ? {} : { isActive: true };
-
-    const categories = await Category.find(query).sort({
-      sortOrder: 1,
-      name: 1,
-    });
-
-    // Update item counts for each category
-    for (const category of categories) {
-      const itemCount = await MenuItem.countDocuments({
-        category: category._id,
-        isAvailable: true,
-      });
-      category.itemCount = itemCount;
-      await category.save();
-    }
-
-    res.json({
+        const categories = await Category.find().sort({ createdAt: -1 });
+        if (!categories || categories.length === 0) 
+            return res.status(404).json({
+        message: "Category List is empty", success: false, error: true})
+    res.status(200).json({
       success: true,
       data: { categories },
     });
@@ -38,47 +21,7 @@ export const getCategories = async (req, res) => {
   }
 };
 
-// @desc    Get single category
-// @route   GET /api/categories/:id
-// @access  Public
-export const getCategory = async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    const category = await Category.findById(id);
-
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
-
-    // Get menu items for this category
-    const menuItems = await MenuItem.find({
-      category: category._id,
-      isAvailable: true,
-    }).sort({ popularity: -1 });
-
-    res.json({
-      success: true,
-      data: {
-        category,
-        menuItems,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch category",
-      error: error.message,
-    });
-  }
-};
-
-// @desc    Create category
-// @route   POST /api/categories
-// @access  Private/Admin
 export const createCategory = async (req, res) => {
   try {
     const category = new Category(req.body);
@@ -104,9 +47,7 @@ export const createCategory = async (req, res) => {
   }
 };
 
-// @desc    Update category
-// @route   PUT /api/categories/:id
-// @access  Private/Admin
+
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -137,9 +78,7 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-// @desc    Delete category
-// @route   DELETE /api/categories/:id
-// @access  Private/Admin
+
 export const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -175,37 +114,3 @@ export const deleteCategory = async (req, res) => {
   }
 };
 
-// @desc    Toggle category active status
-// @route   PATCH /api/categories/:id/toggle
-// @access  Private/Admin
-export const toggleCategoryStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const category = await Category.findById(id);
-
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
-
-    category.isActive = !category.isActive;
-    await category.save();
-
-    res.json({
-      success: true,
-      message: `Category ${
-        category.isActive ? "activated" : "deactivated"
-      } successfully`,
-      data: { category },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to toggle category status",
-      error: error.message,
-    });
-  }
-};
