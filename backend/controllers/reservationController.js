@@ -11,7 +11,6 @@ export const createReservation = async (req, res) => {
     const existingReservation = await Reservation.findOne({
       "reservationDetails.date": reservationDetails.date,
       "reservationDetails.time": reservationDetails.time,
-      status: { $in: ["pending", "confirmed"] },
     });
 
     if (existingReservation) {
@@ -93,69 +92,7 @@ export const getAllReservations = async (req, res) => {
   }
 };
 
-// @desc    Get reservation by confirmation code
-// @route   GET /api/reservations/:confirmationCode
-// @access  Public
-export const getReservationByCode = async (req, res) => {
-  try {
-    const { confirmationCode } = req.params;
 
-    const reservation = await Reservation.findOne({ confirmationCode });
-
-    if (!reservation) {
-      return res.status(404).json({
-        success: false,
-        message: "Reservation not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      data: { reservation },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch reservation",
-      error: error.message,
-    });
-  }
-};
-
-// @desc    Update reservation status
-// @route   PUT /api/reservations/:id/status
-// @access  Private/Admin
-export const updateReservationStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status, tableNumber, notes } = req.body;
-
-    const reservation = await Reservation.findByIdAndUpdate(
-      id,
-      { status, tableNumber, notes },
-      { new: true, runValidators: true }
-    );
-
-    if (!reservation) {
-      return res.status(404).json({
-        success: false,
-        message: "Reservation not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      message: "Reservation updated successfully",
-      data: { reservation },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to update reservation",
-      error: error.message,
-    });
-  }
-};
 
 // @desc    Delete reservation
 // @route   DELETE /api/reservations/:id

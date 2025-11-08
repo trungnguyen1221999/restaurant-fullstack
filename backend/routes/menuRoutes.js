@@ -5,9 +5,7 @@ import {
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
-  toggleAvailability,
 } from "../controllers/menuController.js";
-import { authenticate, requireAdmin } from "../helpers/authMiddleware.js";
 
 const router = express.Router();
 
@@ -24,26 +22,21 @@ router.get("/:id", getMenuItem);
 // @route   POST /api/menu
 // @desc    Create menu item
 // @access  Private/Admin
-router.post("/", authenticate, requireAdmin, createMenuItem);
+router.post("/",  createMenuItem);
 
 // @route   PUT /api/menu/:id
 // @desc    Update menu item
 // @access  Private/Admin
-router.put("/:id", authenticate, requireAdmin, updateMenuItem);
+router.put("/:id", updateMenuItem);
 
 // @route   DELETE /api/menu/:id
 // @desc    Delete menu item
 // @access  Private/Admin
-router.delete("/:id", authenticate, requireAdmin, deleteMenuItem);
+router.delete("/:id",  deleteMenuItem);
 
 // @route   PATCH /api/menu/:id/availability
 // @desc    Toggle menu item availability
 // @access  Private/Admin
-router.patch(
-  "/:id/availability",
-  authenticate,
-  requireAdmin,
-  toggleAvailability
-);
+
 
 export default router;

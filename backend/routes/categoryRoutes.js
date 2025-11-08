@@ -5,9 +5,8 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
-  toggleCategoryStatus,
 } from "../controllers/categoryController.js";
-import { authenticate, requireAdmin } from "../helpers/authMiddleware.js";
+
 
 const router = express.Router();
 
@@ -24,21 +23,20 @@ router.get("/:id", getCategory);
 // @route   POST /api/categories
 // @desc    Create category
 // @access  Private/Admin
-router.post("/", authenticate, requireAdmin, createCategory);
+router.post("/", createCategory);
 
 // @route   PUT /api/categories/:id
 // @desc    Update category
 // @access  Private/Admin
-router.put("/:id", authenticate, requireAdmin, updateCategory);
+router.put("/:id", updateCategory);
 
 // @route   DELETE /api/categories/:id
 // @desc    Delete category
 // @access  Private/Admin
-router.delete("/:id", authenticate, requireAdmin, deleteCategory);
+router.delete("/:id", deleteCategory);
 
 // @route   PATCH /api/categories/:id/toggle
 // @desc    Toggle category active status
 // @access  Private/Admin
-router.patch("/:id/toggle", authenticate, requireAdmin, toggleCategoryStatus);
 
 export default router;
