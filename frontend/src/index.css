@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Khai báo key mapping cho tailwind */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+}
+
+/* =====================
+   THEME TỐI MẶC ĐỊNH
+   ĐEN - VÀNG - TRẮNG
+===================== */
+
+:root {
+  --radius: 0.625rem;
+
+  /* nền & chữ */
+  --background: #000000; /* đen */
+  --foreground: #ffffff; /* trắng */
+
+  /* primary → màu chính (button, link highlight) */
+  --primary: #f4d03f; /* vàng */
+  --primary-foreground: #000000; /* chữ đen trên nền vàng */
+
+  /* secondary → text phụ / subtle UI */
+  --secondary: #ffffff;
+  --secondary-foreground: #000000;
+
+  /* border, input */
+  --border: #333333;
+  --input: #333333;
+}
+
+/* KHÔNG DÙNG DARK THEME = XÓA HOẶC BỎ TRỐNG CLASS .dark */
+.dark {}
+
+/* =====================
+   BASE STYLES
+===================== */
+@layer base {
+  * {
+  @apply border-border focus-visible:outline focus-visible:outline-primary/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Heading màu vàng */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-primary;
+  }
+
+  /* Button mặc định */
+  button, .btn {
+    @apply bg-primary text-primary-foreground font-medium rounded px-4 py-2;
+  }
+
+  /* Nếu cần variant: button secondary */
+  .btn-secondary {
+    @apply bg-transparent text-secondary border border-secondary hover:bg-secondary hover:text-black;
+  }
+}
