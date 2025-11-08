@@ -9,6 +9,7 @@ import {
   Clock,
   Star,
   ShoppingCart,
+  Settings,
 } from "lucide-react";
 
 const NavBar = () => {
@@ -55,12 +56,18 @@ const NavBar = () => {
             <ul className="flex items-center gap-6">
               {[
                 { icon: Menu, label: "Menu", href: "#menu" },
+                { icon: Calendar, label: "Reservations", href: "#book" },
                 { icon: Phone, label: "Contact", href: "#contact" },
+                { icon: Settings, label: "Admin", href: "/admin" },
               ].map((item, index) => (
                 <li key={index}>
                   <a
                     href={item.href}
-                    className="group flex items-center gap-2 text-white/80 hover:text-primary transition-all duration-300 font-medium"
+                    className={`group flex items-center gap-2 transition-all duration-300 font-medium ${
+                      item.label === "Admin"
+                        ? "text-primary/80 hover:text-primary"
+                        : "text-white/80 hover:text-primary"
+                    }`}
                   >
                     <item.icon className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
                     <span className="relative">
@@ -93,8 +100,6 @@ const NavBar = () => {
                   3
                 </span>
               </button>
-
-              
 
               {/* CTA Button */}
               <a
@@ -132,15 +137,25 @@ const NavBar = () => {
                 { icon: Menu, label: "Menu", href: "#menu" },
                 { icon: Calendar, label: "Reservations", href: "#book" },
                 { icon: Phone, label: "Contact", href: "#contact" },
+                { icon: Settings, label: "Admin", href: "/admin" },
               ].map((item, index) => (
                 <li key={index}>
                   <a
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-white hover:text-primary transition-colors duration-300 font-medium py-2"
+                    className={`flex items-center gap-3 transition-colors duration-300 font-medium py-2 ${
+                      item.label === "Admin"
+                        ? "text-primary/80 hover:text-primary"
+                        : "text-white hover:text-primary"
+                    }`}
                   >
                     <item.icon className="w-5 h-5" />
                     {item.label}
+                    {item.label === "Admin" && (
+                      <span className="ml-auto bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">
+                        New
+                      </span>
+                    )}
                   </a>
                 </li>
               ))}
