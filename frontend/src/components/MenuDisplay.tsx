@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { categoryItem, product } from "./../assets/assets";
+import { categoryItem, product } from "../assets/assets.js";
 import {
   ChefHat,
   Utensils,
@@ -111,9 +111,7 @@ const MenuDisplay = () => {
                   className="w-60 h-60 object-cover transition-transform duration-500 group-hover:scale-110 mx-auto"
                 />
                 <div className="absolute top-3 right-3">
-                  <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-1 rounded-full">
-                
-                  </div>
+                  <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-1 rounded-full"></div>
                 </div>
                 <div className="absolute bottom-3 left-3">
                   <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-1 rounded-full">

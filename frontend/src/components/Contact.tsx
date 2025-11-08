@@ -6,9 +6,6 @@ import {
   MapPin,
   ChefHat,
   Github,
-  Facebook,
-  Instagram,
-  Twitter,
   Heart,
   Star,
 } from "lucide-react";
@@ -164,7 +161,6 @@ const Contact = () => {
           </div>
         </div>
 
-      
         {/* Bottom Footer */}
         <div className="border-t border-primary/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2 text-white/60">
