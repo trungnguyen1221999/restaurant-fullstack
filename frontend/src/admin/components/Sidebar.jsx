@@ -62,31 +62,31 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
-            <button
+            <div
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
+              className={`w-full cursor-pointer flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
                 activeTab === item.id
-                  ? "bg-[var(--primary)] text-black font-semibold"
-                  : "text-gray-200 hover:bg-gray-800 hover:text-white"
+                  ? "bg-primary text-black font-semibold"
+                  : "text-gray-200 hover:bg-gray-800 hover:text-white "
               }`}
             >
               <Icon className="w-5 h-5" />
               <span>{item.label}</span>
-            </button>
+            </div>
           );
         })}
       </nav>
 
       {/* Logout Button */}
       <div className="p-4 border-t border-gray-700">
-        <button
+        <div
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-200 hover:bg-red-600 hover:text-white transition-all duration-200"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-200 hover:bg-red-600 hover:text-white transition-all duration-200 cursor-pointer"
         >
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
-        </button>
+        </div>
       </div>
     </div>
   );
