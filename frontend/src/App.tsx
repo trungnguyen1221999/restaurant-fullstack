@@ -5,6 +5,7 @@ import NavBar from "./components/NavBar";
 import Contact from "./components/Contact";
 import AdminLoginPage from "./admin/adminLoginPage";
 import { Route, Routes } from "react-router-dom";
+import CategoryDisplay from "./components/CategoryDisplay";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <>
             <NavBar />
             <Hero />
+            <CategoryDisplay />
             <MenuDisplay />
             <BookForm />
             <Contact />
