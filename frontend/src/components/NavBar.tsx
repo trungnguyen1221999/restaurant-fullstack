@@ -8,7 +8,6 @@ import {
   MapPin,
   Clock,
   Star,
-  ShoppingCart,
   Settings,
 } from "lucide-react";
 
@@ -56,7 +55,6 @@ const NavBar = () => {
             <ul className="flex items-center gap-6">
               {[
                 { icon: Menu, label: "Menu", href: "#menu" },
-                { icon: Calendar, label: "Reservations", href: "#book" },
                 { icon: Phone, label: "Contact", href: "#contact" },
                 { icon: Settings, label: "Admin", href: "/admin" },
               ].map((item, index) => (
@@ -93,13 +91,6 @@ const NavBar = () => {
                 </div>
               </div>
 
-              {/* Cart Button */}
-              <button className="relative p-2 rounded-full bg-black/40 backdrop-blur-sm border border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
-                  3
-                </span>
-              </button>
 
               {/* CTA Button */}
               <a
@@ -135,7 +126,6 @@ const NavBar = () => {
             <ul className="space-y-4 mb-6">
               {[
                 { icon: Menu, label: "Menu", href: "#menu" },
-                { icon: Calendar, label: "Reservations", href: "#book" },
                 { icon: Phone, label: "Contact", href: "#contact" },
                 { icon: Settings, label: "Admin", href: "/admin" },
               ].map((item, index) => (
@@ -151,11 +141,6 @@ const NavBar = () => {
                   >
                     <item.icon className="w-5 h-5" />
                     {item.label}
-                    {item.label === "Admin" && (
-                      <span className="ml-auto bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">
-                        New
-                      </span>
-                    )}
                   </a>
                 </li>
               ))}
@@ -179,14 +164,7 @@ const NavBar = () => {
 
             {/* Mobile CTA */}
             <div className="mt-6 space-y-3">
-              <a
-                href="#book"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-full transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <Calendar className="w-5 h-5" />
-                Reserve Table
-              </a>
+             
               <a
                 href="tel:+123456789"
                 className="w-full bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold py-3 rounded-full transition-all duration-300 flex items-center justify-center gap-2"

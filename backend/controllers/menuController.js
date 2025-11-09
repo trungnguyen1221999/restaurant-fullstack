@@ -107,8 +107,8 @@ export const updateMenuItem = async (req, res) => {
 
     const menuItem = await MenuItem.findByIdAndUpdate(id, req.body, {
       new: true,
-      runValidators: true,
     });
+
 
     if (!menuItem) {
       return res.status(404).json({
@@ -116,7 +116,12 @@ export const updateMenuItem = async (req, res) => {
         message: "Menu item not found",
       });
     }
-
+      const images = req.files;
+        if(images && images.length > 0) {
+          const imageUrls = await uploadMultipleImages(images);
+          menuItem.images = imageUrls;
+          await menuItem.save();
+        }
     res.json({
       success: true,
       message: "Menu item updated successfully",
