@@ -1,3 +1,4 @@
+import React from "react";
 import BookForm from "./components/BookForm";
 import Hero from "./components/Hero";
 import MenuDisplay from "./components/MenuDisplay";
@@ -6,25 +7,27 @@ import Contact from "./components/Contact";
 import AdminLoginPage from "./admin/adminLoginPage";
 import { Route, Routes } from "react-router-dom";
 import CategoryDisplay from "./components/CategoryDisplay";
+import AdminDashboard from "./admin/adminDashboard";
 
 function App() {
   return (
     <Routes>
-      <Route path="/admin" element={<AdminLoginPage />} />
-      <Route
-        path="/"
-        element={
-          <>
-            <NavBar />
-            <Hero />
-            <CategoryDisplay />
-            <MenuDisplay />
-            <BookForm />
-            <Contact />
-          </>
-        }
-      />
-    </Routes>
+        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <NavBar />
+              <Hero />
+              <CategoryDisplay />
+              <MenuDisplay />
+              <BookForm />
+              <Contact />
+            </>
+          }
+        />
+      </Routes>
   );
 }
 

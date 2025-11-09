@@ -14,6 +14,7 @@ import {
   Shield,
   ArrowLeft,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 // Validation schema
 const loginSchema = z.object({
@@ -52,9 +53,9 @@ const AdminLoginPage = () => {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         // Success - redirect to admin dashboard
-        alert("Login successful! Redirecting to admin dashboard...");
+        toast.success("Login successful! Redirecting to admin dashboard...");
         // TODO: Redirect to admin dashboard
-        window.location.href = "/admin/dashboard";
+       navigate("/admin/dashboard");
       } else {
         setLoginError("Invalid username or password. Please try again.");
       }
