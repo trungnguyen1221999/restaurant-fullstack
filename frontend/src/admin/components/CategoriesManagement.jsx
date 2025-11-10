@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  MoreVertical,
-} from "lucide-react";
+import { Plus, Edit, Trash2, MoreVertical } from "lucide-react";
 import toast from "react-hot-toast";
 import { getAllCategories } from "@/api/category.api";
 import { useMutation } from "@tanstack/react-query";
 import { formatDate } from "./../../utils/dateUtils";
 import EditCategoryPopup from "./EditCategoryPopup";
+import DeleteCategoryPopup from "./DeleteCategoryPopup";
 
 const CategoriesManagement = () => {
   const [categories, setCategories] = useState([]);
   const [showEditPopup, setShowEditPopup] = useState(false);
-    const [isUpdate, setIsUpdate] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState('');
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const categoryMutation = useMutation({
     mutationFn: async () => await getAllCategories(),
     onError: (error) => {
@@ -28,6 +25,20 @@ const CategoriesManagement = () => {
   useEffect(() => {
     categoryMutation.mutate();
   }, [isUpdate]);
+
+  const handleConfirmDelete = (category) => {
+    // You can implement the API call here later
+    console.log("Deleting category:", category);
+    toast.success(`Category "${category.name}" will be deleted`);
+    setIsUpdate(!isUpdate);
+  };
+
+  const handleSaveCategory = (updatedCategory) => {
+    // You can implement the API call here later
+    console.log("Saving category:", updatedCategory);
+    toast.success(`Category "${updatedCategory.name}" updated successfully`);
+    setIsUpdate(!isUpdate);
+  };
 
   return (
     <div className="space-y-6 p-10">
@@ -79,16 +90,22 @@ const CategoriesManagement = () => {
                     {/* Dropdown Menu */}
                     <div className="absolute right-0 top-10 w-40 bg-gray-800/95 border border-gray-700/50 rounded-xl shadow-2xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-20 backdrop-blur-md">
                       <div
-                        onClick={() => {setShowEditPopup(true); setSelectedCategory(category._id)} }
+                        onClick={() => {
+                          setSelectedCategory(category._id);
+                          setShowEditPopup(true);
+                        }}
                         className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-blue-500/10 hover:text-blue-400 transition-colors"
                       >
-                        <Edit
-                          className="w-3 h-3"
-                         
-                        />
+                        <Edit className="w-3 h-3" />
                         Edit Category
                       </div>
-                      <div className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors rounded-b-xl">
+                      <div
+                        onClick={() => {
+                          setSelectedCategory(category._id);
+                          setShowDeletePopup(true);
+                        }}
+                        className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors rounded-b-xl"
+                      >
                         <Trash2 className="w-3 h-3" />
                         Delete
                       </div>
@@ -110,10 +127,19 @@ const CategoriesManagement = () => {
       </div>
       {showEditPopup && (
         <EditCategoryPopup
-          setIsUpdate = {setIsUpdate}
-          isUpdate = {isUpdate}
-           categoryId={selectedCategory}
+          setIsUpdate={setIsUpdate}
+          isUpdate={isUpdate}
+          categoryId={selectedCategory}
           setOpen={setShowEditPopup}
+        />
+      )}
+
+      {showDeletePopup && (
+        <DeleteCategoryPopup
+          category={selectedCategory}
+          isOpen={showDeletePopup}
+          onClose={() => setShowDeletePopup(false)}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>
