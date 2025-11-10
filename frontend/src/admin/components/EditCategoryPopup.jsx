@@ -82,7 +82,7 @@ const EditCategoryPopup = ({ setOpen, categoryId, setIsUpdate, isUpdate }) => {
 
           <button
             onClick={() => setOpen(false)}
-            className="p-2 hover:text-red-500 hover:bg-gray-700/50 rounded-lg transition-all duration-200"
+            className="p-2 cursor-pointer hover:text-red-500 hover:bg-gray-700/50 rounded-lg transition-all duration-200"
           >
             <X className="w-5 h-5 text-white" />
           </button>
@@ -109,7 +109,7 @@ const EditCategoryPopup = ({ setOpen, categoryId, setIsUpdate, isUpdate }) => {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex-1 px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-gray-300 font-medium hover:bg-gray-600/50 hover:text-white transition-all duration-200"
+              className="cursor-pointer flex-1 px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-gray-300 font-medium hover:bg-gray-600/50 hover:text-white transition-all duration-200"
             >
               Cancel
             </button>
@@ -117,7 +117,7 @@ const EditCategoryPopup = ({ setOpen, categoryId, setIsUpdate, isUpdate }) => {
             <button
               type="submit"
               disabled={updateCategoryMutation.isPending}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-600 hover:to-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-amber-500/25"
+              className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold rounded-xl hover:from-amber-600 hover:to-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-amber-500/25"
             >
               <Save className="w-4 h-4" />
               Save Change
