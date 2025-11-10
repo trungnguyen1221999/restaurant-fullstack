@@ -15,6 +15,7 @@ const CategoriesManagement = () => {
   const [categories, setCategories] = useState([]);
   const [showEditPopup, setShowEditPopup] = useState(false);
     const [isUpdate, setIsUpdate] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('');
   const categoryMutation = useMutation({
     mutationFn: async () => await getAllCategories(),
     onError: (error) => {
@@ -24,7 +25,6 @@ const CategoriesManagement = () => {
       setCategories(data.data.categories);
     },
   });
-
   useEffect(() => {
     categoryMutation.mutate();
   }, [isUpdate]);
@@ -79,10 +79,13 @@ const CategoriesManagement = () => {
                     {/* Dropdown Menu */}
                     <div className="absolute right-0 top-10 w-40 bg-gray-800/95 border border-gray-700/50 rounded-xl shadow-2xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all duration-200 z-20 backdrop-blur-md">
                       <div
-                        onClick={() => setShowEditPopup(true)}
+                        onClick={() => {setShowEditPopup(true); setSelectedCategory(category._id)} }
                         className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-blue-500/10 hover:text-blue-400 transition-colors"
                       >
-                        <Edit className="w-3 h-3" />
+                        <Edit
+                          className="w-3 h-3"
+                         
+                        />
                         Edit Category
                       </div>
                       <div className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors rounded-b-xl">
@@ -105,7 +108,14 @@ const CategoriesManagement = () => {
             );
           })}
       </div>
-      {showEditPopup && <EditCategoryPopup  setOpen={setShowEditPopup} />}
+      {showEditPopup && (
+        <EditCategoryPopup
+          setIsUpdate = {setIsUpdate}
+          isUpdate = {isUpdate}
+           categoryId={selectedCategory}
+          setOpen={setShowEditPopup}
+        />
+      )}
     </div>
   );
 };
