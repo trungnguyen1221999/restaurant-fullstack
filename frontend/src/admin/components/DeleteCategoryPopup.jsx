@@ -53,7 +53,7 @@ const DeleteCategoryPopup = ({
 
   const handleConfirm = async () => {
     try {
-      await deleteMenuById(categoryId);
+      await deleteCategory(categoryId);
       toast.success(`Category "${categoryName}" deleted successfully`);
       setIsUpdate(!isUpdate);
       onClose();

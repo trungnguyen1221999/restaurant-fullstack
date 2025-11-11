@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChefHat, Utensils, Pizza, Coffee, Soup, Clock } from "lucide-react";
 import { getAllMenus } from "@/api/menu.api";
+import { getAllCategories } from "@/api/category.api"; // ✅ import new API for categories
 import ProductDetailPopup from "./ProductDetailPopup"; // ✅ import mới
 
 interface MenuItem {
@@ -22,27 +23,31 @@ const MenuDisplay: React.FC = () => {
   // ✅ popup state
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
+  // Fetch categories and menu items
   useEffect(() => {
-    const fetchMenus = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await getAllMenus();
-        const items: MenuItem[] = res.data.menuItems || [];
-        setMenuItems(items);
 
-        // Tạo danh sách category duy nhất
-        const uniqueCategories: string[] = [
-          "All",
-          ...new Set(items.map((item) => item.categoryName)),
-        ];
-        setCategories(uniqueCategories);
+        // Fetch categories from the API
+        const categoryRes = await getAllCategories();
+        const fetchedCategories = categoryRes.data.categories.map(
+          (category: { name: string }) => category.name
+        ); // Extract category names
+        setCategories(["All", ...fetchedCategories]);
+
+        // Fetch menu items from the API
+        const menuRes = await getAllMenus();
+        const fetchedMenuItems: MenuItem[] = menuRes.data.menuItems || [];
+        setMenuItems(fetchedMenuItems);
       } catch (err) {
-        console.error("Failed to load menus:", err);
+        console.error("Failed to load data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchMenus();
+
+    fetchData();
   }, []);
 
   const getCategoryIcon = (category: string) => {
@@ -101,7 +106,8 @@ const MenuDisplay: React.FC = () => {
                     isActive
                       ? "bg-primary border-primary text-black shadow-lg scale-105"
                       : "bg-transparent border-border text-secondary hover:border-primary hover:text-primary hover:shadow-md"
-                  }`}
+                  }
+                `}
               >
                 {getCategoryIcon(category)}
                 <span className="whitespace-nowrap">{category}</span>
