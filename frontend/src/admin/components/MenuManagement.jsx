@@ -11,12 +11,14 @@ import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { getAllMenus } from "@/api/menu.api";
 import DeleteMenuPopup from "./DeleteMenuPopup";
+import AddMenuPopup from "./AddMenuPopup";
 
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const getMenuItemsMutation = useMutation({
     mutationFn: async () => {
@@ -25,6 +27,7 @@ const MenuManagement = () => {
     },
     onSuccess: (data) => {
       setMenuItems(data.data.menuItems);
+      setIsUpdate(!isUpdate);
     },
     onError: (error) => {
       toast.error(
@@ -35,7 +38,7 @@ const MenuManagement = () => {
 
   useEffect(() => {
     getMenuItemsMutation.mutate();
-  }, []);
+  }, [isUpdate]);
 
   return (
     <div className="p-6 space-y-8">
@@ -49,7 +52,12 @@ const MenuManagement = () => {
             Manage your restaurant menu items effortlessly
           </p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-3 bg-[var(--primary)] text-black font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-[var(--primary)]/30">
+        <button
+          onClick={() => {
+            setShowAddModal(true);
+          }}
+          className="flex items-center gap-2 px-5 py-3 bg-[var(--primary)] text-black font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-[var(--primary)]/30"
+        >
           <Plus className="w-4 h-4" />
           Add Menu Item
         </button>
@@ -68,7 +76,7 @@ const MenuManagement = () => {
                 <img
                   src={item.images[0]}
                   alt={item.name}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 bg-transparent"
                 />
               ) : (
                 <div className="h-full flex items-center justify-center">
@@ -142,6 +150,13 @@ const MenuManagement = () => {
           onClose={() => setShowDeletePopup(false)}
           setIsUpdate={setIsUpdate}
           isUpdate={isUpdate}
+        />
+      )}
+      {showAddModal && (
+        <AddMenuPopup
+          setIsUpdate={setIsUpdate}
+          isUpdate={isUpdate}
+          setOpen={setShowAddModal}
         />
       )}
     </div>

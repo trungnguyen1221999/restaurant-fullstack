@@ -6,7 +6,6 @@ import {
   Calendar,
   LogOut,
   Settings,
-  Users,
 } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
@@ -31,11 +30,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       label: "Reservations",
       icon: Calendar,
     },
-    {
-      id: "users",
-      label: "Users",
-      icon: Users,
-    },
+
     {
       id: "settings",
       label: "Settings",

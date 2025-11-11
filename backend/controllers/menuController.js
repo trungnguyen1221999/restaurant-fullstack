@@ -1,6 +1,6 @@
 import { uploadMultipleImages } from "../helpers/uploadImage.js";
 import MenuItem from "../models/MenuItem.js";
-
+import Category from "../models/Category.js";
 export const getMenuItems = async (req, res) => {
   try {
     const menuItems = await MenuItem.find().sort({ createdAt: -1 });
@@ -57,16 +57,8 @@ export const getMenuItem = async (req, res) => {
 
 export const createMenuItem = async (req, res) => {
   try {
-    const { name, description, price, category, categoryName, ingredients } =
-      req.body;
-    if (
-      !name ||
-      !description ||
-      !price ||
-      !categoryName ||
-      !ingredients ||
-      !category
-    ) {
+    const { name, description, price, categoryName, ingredients } = req.body;
+    if (!name || !description || !price || !categoryName || !ingredients) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -80,12 +72,16 @@ export const createMenuItem = async (req, res) => {
         message: "Image file is required",
       });
     }
+    let category = await Category.findOne({ name: categoryName });
+    if (!category) {
+      category = await Category.create({ name: categoryName });
+    }
     const imageUrls = await uploadMultipleImages(images);
     const newMenuItem = await MenuItem.create({
       name,
       description,
       price,
-      category,
+      category: category._id,
       categoryName,
       ingredients,
       images: imageUrls,
