@@ -26,13 +26,6 @@ const CategoriesManagement = () => {
     categoryMutation.mutate();
   }, [isUpdate]);
 
-  const handleConfirmDelete = (category) => {
-    // You can implement the API call here later
-    console.log("Deleting category:", category);
-    toast.success(`Category "${category.name}" will be deleted`);
-    setIsUpdate(!isUpdate);
-  };
-
   const handleSaveCategory = (updatedCategory) => {
     // You can implement the API call here later
     console.log("Saving category:", updatedCategory);
@@ -136,10 +129,11 @@ const CategoriesManagement = () => {
 
       {showDeletePopup && (
         <DeleteCategoryPopup
-          category={selectedCategory}
+          categoryId={selectedCategory}
           isOpen={showDeletePopup}
           onClose={() => setShowDeletePopup(false)}
-          onConfirm={handleConfirmDelete}
+          setIsUpdate={setIsUpdate}
+          isUpdate={isUpdate}
         />
       )}
     </div>

@@ -1,10 +1,38 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, Trash2, AlertTriangle } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-hot-toast"; // hoặc thư viện bạn đang dùng
+import { deleteCategory, getCategoryById } from "@/api/category.api";
 
-const DeleteCategoryPopup = ({ category, isOpen, onClose, onConfirm }) => {
+const DeleteCategoryPopup = ({
+  categoryId,
+  isOpen,
+  onClose,
+  setIsUpdate,
+  isUpdate,
+}) => {
   const modalRef = useRef(null);
+  const [categoryName, setCategoryName] = useState("");
 
-  // Handle click outside to close
+  // Get category details
+  const getCategoryMutation = useMutation({
+    mutationFn: async () => await getCategoryById(categoryId),
+    onSuccess: (data) => {
+      setCategoryName(data.data?.category?.name || "Unknown");
+    },
+    onError: (err) => {
+      toast.error("Failed to fetch category details: " + err.message);
+    },
+  });
+
+  // Fetch category when popup opens
+  useEffect(() => {
+    if (isOpen && categoryId) {
+      getCategoryMutation.mutate();
+    }
+  }, [isOpen, categoryId]);
+
+  // Handle click outside modal
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -14,38 +42,27 @@ const DeleteCategoryPopup = ({ category, isOpen, onClose, onConfirm }) => {
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "hidden"; // Prevent background scroll
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "auto";
     };
   }, [isOpen, onClose]);
 
-  // Handle ESC key to close
-  useEffect(() => {
-    const handleEscKey = (event) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscKey);
+  const handleConfirm = async () => {
+    try {
+      await deleteCategory(categoryId);
+      toast.success(`Category "${categoryName}" deleted successfully`);
+      setIsUpdate(!isUpdate);
+      onClose();
+    } catch (err) {
+      toast.error("Delete failed: " + err.message);
     }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscKey);
-    };
-  }, [isOpen, onClose]);
-
-  const handleConfirm = () => {
-    onConfirm(category);
-    onClose();
   };
 
-  if (!isOpen || !category) return null;
+  if (!isOpen || !categoryId) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -94,13 +111,8 @@ const DeleteCategoryPopup = ({ category, isOpen, onClose, onConfirm }) => {
 
             <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 mb-4">
               <p className="text-amber-400 font-medium text-lg">
-                {category.name}
+                {categoryName || "Loading..."}
               </p>
-              {category.description && (
-                <p className="text-gray-400 text-sm mt-1">
-                  {category.description}
-                </p>
-              )}
             </div>
 
             <p className="text-red-400 text-sm">
