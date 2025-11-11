@@ -3,34 +3,36 @@ import { X, Trash2, AlertTriangle } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast"; // hoặc thư viện bạn đang dùng
 import { deleteCategory, getCategoryById } from "@/api/category.api";
+import { deleteMenuById, getMenuById } from "@/api/menu.api";
 
-const DeleteCategoryPopup = ({
-  categoryId,
+const DeleteMenuPopup = ({
+  menuId,
   isOpen,
   onClose,
   setIsUpdate,
   isUpdate,
 }) => {
   const modalRef = useRef(null);
-  const [categoryName, setCategoryName] = useState("");
+  const [menuName, setMenuName] = useState("");
 
   // Get category details
-  const getCategoryMutation = useMutation({
-    mutationFn: async () => await getCategoryById(categoryId),
+  const getMenuMutation = useMutation({
+    mutationFn: async () => await getMenuById(menuId),
     onSuccess: (data) => {
-      setCategoryName(data.data?.category?.name || "Unknown");
+      setMenuName(data.data?.menuItem?.name || "Unknown");
+      setIsUpdate(!isUpdate);
     },
     onError: (err) => {
-      toast.error("Failed to fetch category details: " + err.message);
+      toast.error("Failed to fetch menu details: " + err.message);
     },
   });
 
   // Fetch category when popup opens
   useEffect(() => {
-    if (isOpen && categoryId) {
-      getCategoryMutation.mutate();
+    if (isOpen && menuId) {
+      getMenuMutation.mutate();
     }
-  }, [isOpen, categoryId]);
+  }, [isOpen, menuId]);
 
   // Handle click outside modal
   useEffect(() => {
@@ -53,8 +55,8 @@ const DeleteCategoryPopup = ({
 
   const handleConfirm = async () => {
     try {
-      await deleteMenuById(categoryId);
-      toast.success(`Category "${categoryName}" deleted successfully`);
+      await deleteMenuById(menuId);
+      toast.success(`Menu "${menuName}" deleted successfully`);
       setIsUpdate(!isUpdate);
       onClose();
     } catch (err) {
@@ -62,7 +64,7 @@ const DeleteCategoryPopup = ({
     }
   };
 
-  if (!isOpen || !categoryId) return null;
+  if (!isOpen || !menuId) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -106,17 +108,17 @@ const DeleteCategoryPopup = ({
             </div>
 
             <h3 className="text-lg font-semibold text-white mb-2">
-              Are you sure you want to delete this Menu?
+              Are you sure you want to delete this menu?
             </h3>
 
             <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 mb-4">
               <p className="text-amber-400 font-medium text-lg">
-                {categoryName || "Loading..."}
+                {menuName || "Loading..."}
               </p>
             </div>
 
             <p className="text-red-400 text-sm">
-              This will permanently delete the category and all associated data.
+              This will permanently delete the menu and all associated data.
             </p>
           </div>
 
@@ -144,4 +146,4 @@ const DeleteCategoryPopup = ({
   );
 };
 
-export default DeleteCategoryPopup;
+export default DeleteMenuPopup;
