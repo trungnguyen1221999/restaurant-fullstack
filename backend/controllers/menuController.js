@@ -1,10 +1,9 @@
 import { uploadMultipleImages } from "../helpers/uploadImage.js";
 import MenuItem from "../models/MenuItem.js";
 
-
 export const getMenuItems = async (req, res) => {
   try {
-   const menuItems = await MenuItem.find().sort({ createdAt: -1 });
+    const menuItems = await MenuItem.find().sort({ createdAt: -1 });
 
     if (!menuItems || menuItems.length === 0) {
       return res.status(404).json({
@@ -26,14 +25,14 @@ export const getMenuItems = async (req, res) => {
   }
 };
 
-
 export const getMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
-    if(!id) return res.status(400).json({
-      success: false,
-      message: "Menu item ID is required",
-    });
+    if (!id)
+      return res.status(400).json({
+        success: false,
+        message: "Menu item ID is required",
+      });
     const menuItem = await MenuItem.findById(id);
 
     if (!menuItem) {
@@ -56,35 +55,33 @@ export const getMenuItem = async (req, res) => {
   }
 };
 
-
 export const createMenuItem = async (req, res) => {
   try {
-
-    const { name, description, price, category, ingredients } = req.body;
-    if (!name || !description || !price || !category || !ingredients) {
+    const { name, description, price, categoryName, ingredients } = req.body;
+    if (!name || !description || !price || !categoryName || !ingredients) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
-      }
+    }
 
-      const  images  = req.files;
-      if(!images || images.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Image file is required",
-        });
-      }
-      const imageUrls = await uploadMultipleImages(images);
-      const newMenuItem = await MenuItem.create({
-        name,
-        description,
-        price,
-        category,
-        ingredients,
-        images: imageUrls,
+    const images = req.files;
+    if (!images || images.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Image file is required",
       });
-
+    }
+    const imageUrls = await uploadMultipleImages(images);
+    const newMenuItem = await MenuItem.create({
+      name,
+      description,
+      price,
+      category,
+      categoryName,
+      ingredients,
+      images: imageUrls,
+    });
 
     res.status(201).json({
       success: true,
@@ -100,7 +97,6 @@ export const createMenuItem = async (req, res) => {
   }
 };
 
-
 export const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
@@ -109,19 +105,18 @@ export const updateMenuItem = async (req, res) => {
       new: true,
     });
 
-
     if (!menuItem) {
       return res.status(404).json({
         success: false,
         message: "Menu item not found",
       });
     }
-      const images = req.files;
-        if(images && images.length > 0) {
-          const imageUrls = await uploadMultipleImages(images);
-          menuItem.images = imageUrls;
-          await menuItem.save();
-        }
+    const images = req.files;
+    if (images && images.length > 0) {
+      const imageUrls = await uploadMultipleImages(images);
+      menuItem.images = imageUrls;
+      await menuItem.save();
+    }
     res.json({
       success: true,
       message: "Menu item updated successfully",
@@ -135,7 +130,6 @@ export const updateMenuItem = async (req, res) => {
     });
   }
 };
-
 
 export const deleteMenuItem = async (req, res) => {
   try {
@@ -162,4 +156,3 @@ export const deleteMenuItem = async (req, res) => {
     });
   }
 };
-

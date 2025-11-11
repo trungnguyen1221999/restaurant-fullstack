@@ -24,23 +24,27 @@ const menuItemSchema = new mongoose.Schema(
       ref: "Category",
       required: [true, "Category is required"],
     },
+    categoryName: {
+      type: String,
+      required: [true, "Category name is required"],
+      trim: true,
+    },
     images: {
       type: [String],
       required: [true, "Image is required"],
       trim: true,
     },
-    ingredients: [{
-      type: String,
-      trim: true,
-    }],
-   
+    ingredients: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
-
-
 
 const MenuItem = mongoose.model("MenuItem", menuItemSchema);
 
