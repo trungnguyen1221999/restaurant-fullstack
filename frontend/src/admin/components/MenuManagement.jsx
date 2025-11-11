@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getAllMenus } from "@/api/menu.api";
 import DeleteMenuPopup from "./DeleteMenuPopup";
 import AddMenuPopup from "./AddMenuPopup";
+import EditMenuPopup from "./EditMenuPopup";
 
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -19,6 +20,7 @@ const MenuManagement = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
 
   const getMenuItemsMutation = useMutation({
     mutationFn: async () => {
@@ -27,7 +29,6 @@ const MenuManagement = () => {
     },
     onSuccess: (data) => {
       setMenuItems(data.data.menuItems);
-      setIsUpdate(!isUpdate);
     },
     onError: (error) => {
       toast.error(
@@ -67,7 +68,7 @@ const MenuManagement = () => {
       <div className="grid grid-cols-1 sm:grid-cols-4 xl:grid-cols-5 gap-6">
         {menuItems.map((item) => (
           <div
-            key={item.id}
+            key={item._id}
             className="group bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 rounded-2xl overflow-hidden shadow-md hover:shadow-[var(--primary)]/20 transition-all duration-300"
           >
             {/* Image (vuông) */}
@@ -125,7 +126,13 @@ const MenuManagement = () => {
 
               {/* Buttons */}
               <div className="flex gap-2 pt-2">
-                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200">
+                <button
+                  onClick={() => {
+                    setSelectedMenu(item._id);
+                    setShowEditPopup(true);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200"
+                >
                   <Edit className="w-4 h-4" />
                   Edit
                 </button>
@@ -157,6 +164,14 @@ const MenuManagement = () => {
           setIsUpdate={setIsUpdate}
           isUpdate={isUpdate}
           setOpen={setShowAddModal}
+        />
+      )}
+      {showEditPopup && (
+        <EditMenuPopup
+          setIsUpdate={setIsUpdate}
+          isUpdate={isUpdate}
+          setOpen={setShowEditPopup}
+          menuId={selectedMenu}
         />
       )}
     </div>
