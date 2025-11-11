@@ -88,12 +88,12 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
   const onSubmit = (values) => updateMenuMutation.mutate(values);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center max-h-screen overflow-auto">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={() => setOpen(false)}
       />
-      <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl shadow-2xl w-full max-w-md mx-4 animate-in zoom-in-95 duration-200">
+      <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-amber-500/20 rounded-lg border border-amber-500/30">
@@ -114,49 +114,57 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
-          <ImageUploader
-            originalImages={originalImages}
-            imageFiles={imageFiles}
-            setOriginalImages={setOriginalImages}
-            setImageFiles={setImageFiles}
-          />
-          <TextInput
-            label="Menu Name"
-            icon={Type}
-            {...register("name")}
-            error={formState.errors.name}
-          />
-          <TextInput
-            label="Description"
-            icon={List}
-            type="textarea"
-            {...register("description")}
-            error={formState.errors.description}
-          />
-          <TextInput
-            label="Price"
-            icon={Euro}
-            {...register("price")}
-            error={formState.errors.price}
-          />
-          <TextInput
-            label="Category"
-            icon={Package}
-            {...register("categoryName")}
-            error={formState.errors.categoryName}
-          />
-          <TextInput
-            label="Ingredients (comma separated)"
-            icon={List}
-            {...register("ingredients")}
-            error={formState.errors.ingredients}
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Left: Image Uploader */}
+            <div className="flex-shrink-0 w-full md:w-1/2">
+              <ImageUploader
+                originalImages={originalImages}
+                imageFiles={imageFiles}
+                setOriginalImages={setOriginalImages}
+                setImageFiles={setImageFiles}
+              />
+            </div>
 
-          <ActionButtons
-            onCancel={() => setOpen(false)}
-            isLoading={updateMenuMutation.isPending}
-          />
+            {/* Right: Inputs */}
+            <div className="flex-1 flex flex-col gap-4">
+              <TextInput
+                label="Menu Name"
+                icon={Type}
+                {...register("name")}
+                error={formState.errors.name}
+              />
+              <TextInput
+                label="Description"
+                icon={List}
+                type="textarea"
+                {...register("description")}
+                error={formState.errors.description}
+              />
+              <TextInput
+                label="Price"
+                icon={Euro}
+                {...register("price")}
+                error={formState.errors.price}
+              />
+              <TextInput
+                label="Category"
+                icon={Package}
+                {...register("categoryName")}
+                error={formState.errors.categoryName}
+              />
+              <TextInput
+                label="Ingredients (comma separated)"
+                icon={List}
+                {...register("ingredients")}
+                error={formState.errors.ingredients}
+              />
+              <ActionButtons
+                onCancel={() => setOpen(false)}
+                isLoading={updateMenuMutation.isPending}
+              />
+            </div>
+          </div>
         </form>
       </div>
     </div>

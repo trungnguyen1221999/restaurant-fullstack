@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { X, Image } from "lucide-react";
 
 const ImageUploader = ({
@@ -7,9 +7,13 @@ const ImageUploader = ({
   setOriginalImages,
   setImageFiles,
 }) => {
+  const inputRef = useRef(null);
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setImageFiles((prev) => [...prev, ...files]);
+    // Reset input để có thể upload cùng file nhiều lần
+    e.target.value = null;
   };
 
   const handleRemoveImage = (index, isOriginal = false) => {
@@ -26,60 +30,54 @@ const ImageUploader = ({
         <Image className="w-4 h-4" /> Menu Images
       </label>
 
-      {/* Original Images */}
-      <div className="grid grid-cols-2 gap-2 mb-2">
-        {originalImages.map((url, index) => (
-          <div key={index} className="relative">
-            <img
-              src={url}
-              alt={`Menu ${index}`}
-              className="w-24 h-24 object-cover rounded-lg"
-            />
-            <button
-              type="button"
-              onClick={() => handleRemoveImage(index, true)}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+      <div className="flex gap-3 mb-4 flex-wrap">
+        {[...originalImages, ...imageFiles].map((item, index) => {
+          // Kiểm tra xem item là original (string URL) hay mới upload (File object)
+          const isOriginal = typeof item === "string";
+          const src = isOriginal ? item : URL.createObjectURL(item);
+
+          return (
+            <div
+              key={index}
+              className="relative w-24 h-24 rounded-lg overflow-hidden"
             >
-              <X />
-            </button>
-          </div>
-        ))}
+              <img
+                src={src}
+                alt={`Menu ${index}`}
+                className="w-full h-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (isOriginal) handleRemoveImage(index, true);
+                  else handleRemoveImage(index - originalImages.length);
+                }}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center p-0 m-0 text-xs"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          );
+        })}
       </div>
 
-      {/* New Uploaded Images */}
-      <div className="grid grid-cols-2 gap-2 mb-2">
-        {imageFiles.map((file, index) => (
-          <div key={index} className="relative">
-            <img
-              src={URL.createObjectURL(file)}
-              alt={`New ${index}`}
-              className="w-24 h-24 object-cover rounded-lg"
-            />
-            <button
-              type="button"
-              onClick={() => handleRemoveImage(index)}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-            >
-              <X />
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <label className="cursor-pointer inline-block mt-2">
+      {/* Upload Button */}
+      <div>
         <input
           type="file"
           multiple
+          ref={inputRef}
           onChange={handleFileChange}
           className="hidden"
         />
         <button
           type="button"
+          onClick={() => inputRef.current.click()}
           className="px-3 py-1 bg-gray-700 rounded-lg text-white hover:bg-gray-600 transition"
         >
           Upload Images
         </button>
-      </label>
+      </div>
     </div>
   );
 };
