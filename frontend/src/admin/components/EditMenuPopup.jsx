@@ -39,6 +39,7 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
 
   const [imageFiles, setImageFiles] = useState([]);
   const [originalImages, setOriginalImages] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]); // mới: lưu ảnh cũ bị xóa
 
   const getMenuMutation = useMutation({
     mutationFn: async () => await getMenuById(menuId),
@@ -53,6 +54,8 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
         images: [],
       });
       setOriginalImages(menu.images || []);
+      setDeletedImages([]);
+      setImageFiles([]);
     },
     onError: (err) =>
       toast.error("Failed to fetch menu details: " + err.message),
@@ -74,7 +77,13 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
         "ingredients",
         values.ingredients.split(",").map((i) => i.trim())
       );
+
+      // thêm ảnh mới
       imageFiles.forEach((file) => formData.append("images", file));
+
+      // gửi danh sách ảnh cũ bị xóa
+      formData.append("deletedImages", JSON.stringify(deletedImages));
+
       return await editMenuById(menuId, formData);
     },
     onSuccess: () => {
@@ -123,6 +132,8 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
                 imageFiles={imageFiles}
                 setOriginalImages={setOriginalImages}
                 setImageFiles={setImageFiles}
+                deletedImages={deletedImages} // thêm prop
+                setDeletedImages={setDeletedImages} // thêm prop
               />
             </div>
 

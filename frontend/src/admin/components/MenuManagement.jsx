@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Search,
-  Image as ImageIcon,
-  DollarSign,
-} from "lucide-react";
+import { Plus, Edit, Trash2, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { getAllMenus } from "@/api/menu.api";
@@ -16,6 +9,9 @@ import EditMenuPopup from "./EditMenuPopup";
 
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("");
@@ -28,7 +24,13 @@ const MenuManagement = () => {
       return response;
     },
     onSuccess: (data) => {
-      setMenuItems(data.data.menuItems);
+      const items = data.data.menuItems;
+      setMenuItems(items);
+      setFilteredItems(items);
+
+      // Lấy danh sách category duy nhất + "All"
+      const cats = Array.from(new Set(items.map((i) => i.categoryName)));
+      setCategories(["All", ...cats]);
     },
     onError: (error) => {
       toast.error(
@@ -40,6 +42,17 @@ const MenuManagement = () => {
   useEffect(() => {
     getMenuItemsMutation.mutate();
   }, [isUpdate]);
+
+  // Filter menu items khi chọn category
+  useEffect(() => {
+    if (selectedCategory === "All") {
+      setFilteredItems(menuItems);
+    } else {
+      setFilteredItems(
+        menuItems.filter((item) => item.categoryName === selectedCategory)
+      );
+    }
+  }, [selectedCategory, menuItems]);
 
   return (
     <div className="p-6 space-y-8">
@@ -54,9 +67,7 @@ const MenuManagement = () => {
           </p>
         </div>
         <button
-          onClick={() => {
-            setShowAddModal(true);
-          }}
+          onClick={() => setShowAddModal(true)}
           className="flex items-center gap-2 px-5 py-3 bg-[var(--primary)] text-black font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-[var(--primary)]/30"
         >
           <Plus className="w-4 h-4" />
@@ -64,14 +75,31 @@ const MenuManagement = () => {
         </button>
       </div>
 
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              selectedCategory === cat
+                ? "bg-[var(--primary)] text-black"
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {/* Menu Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-4 xl:grid-cols-5 gap-6">
-        {menuItems.map((item) => (
+        {filteredItems.map((item) => (
           <div
             key={item._id}
             className="group bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 rounded-2xl overflow-hidden shadow-md hover:shadow-[var(--primary)]/20 transition-all duration-300"
           >
-            {/* Image (vuông) */}
+            {/* Image */}
             <div className="aspect-square relative w-full overflow-hidden bg-gray-800">
               {item.images?.[0] ? (
                 <img
@@ -150,6 +178,8 @@ const MenuManagement = () => {
           </div>
         ))}
       </div>
+
+      {/* Modals */}
       {showDeletePopup && (
         <DeleteMenuPopup
           menuId={selectedMenu}

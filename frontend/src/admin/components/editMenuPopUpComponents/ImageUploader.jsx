@@ -6,18 +6,21 @@ const ImageUploader = ({
   imageFiles,
   setOriginalImages,
   setImageFiles,
+  deletedImages,
+  setDeletedImages,
 }) => {
   const inputRef = useRef(null);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setImageFiles((prev) => [...prev, ...files]);
-    // Reset input để có thể upload cùng file nhiều lần
-    e.target.value = null;
+    e.target.value = null; // reset input
   };
 
   const handleRemoveImage = (index, isOriginal = false) => {
     if (isOriginal) {
+      const removed = originalImages[index];
+      setDeletedImages((prev) => [...prev, removed]); // thêm vào deletedImages
       setOriginalImages((prev) => prev.filter((_, i) => i !== index));
     } else {
       setImageFiles((prev) => prev.filter((_, i) => i !== index));
@@ -32,7 +35,6 @@ const ImageUploader = ({
 
       <div className="flex gap-3 mb-4 flex-wrap">
         {[...originalImages, ...imageFiles].map((item, index) => {
-          // Kiểm tra xem item là original (string URL) hay mới upload (File object)
           const isOriginal = typeof item === "string";
           const src = isOriginal ? item : URL.createObjectURL(item);
 
@@ -61,7 +63,6 @@ const ImageUploader = ({
         })}
       </div>
 
-      {/* Upload Button */}
       <div>
         <input
           type="file"

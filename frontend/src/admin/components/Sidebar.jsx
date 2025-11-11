@@ -5,7 +5,6 @@ import {
   UtensilsCrossed,
   Calendar,
   LogOut,
-  Settings,
 } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
@@ -29,12 +28,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       id: "reservations",
       label: "Reservations",
       icon: Calendar,
-    },
-
-    {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
     },
   ];
 
@@ -108,12 +101,12 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       {/* User Info */}
       <div className="p-4 border-t border-gray-800">
         <div className="flex items-center gap-3 mb-3 p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
-          <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-            <span className="text-sm font-bold text-black">A</span>
+          <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+            <span className="text-sm font-bold text-black">K</span>
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-white">Admin User</p>
-            <p className="text-xs text-gray-400">admin@restaurant.com</p>
+            <p className="text-sm font-bold text-gray-400">kainguyen</p>
           </div>
         </div>
 
