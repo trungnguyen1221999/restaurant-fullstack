@@ -6,11 +6,13 @@ import { useMutation } from "@tanstack/react-query";
 import { formatDate } from "./../../utils/dateUtils";
 import EditCategoryPopup from "./EditCategoryPopup";
 import DeleteCategoryPopup from "./DeleteCategoryPopup";
+import AddCategoryPopup from "./AddCategoryPopup";
 
 const CategoriesManagement = () => {
   const [categories, setCategories] = useState([]);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const categoryMutation = useMutation({
@@ -134,6 +136,13 @@ const CategoriesManagement = () => {
           onClose={() => setShowDeletePopup(false)}
           setIsUpdate={setIsUpdate}
           isUpdate={isUpdate}
+        />
+      )}
+      {showAddModal && (
+        <AddCategoryPopup
+          setIsUpdate={setIsUpdate}
+          isUpdate={isUpdate}
+          setOpen={setShowAddModal}
         />
       )}
     </div>

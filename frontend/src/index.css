@@ -49,14 +49,15 @@
 }
 
 /* KHÔNG DÙNG DARK THEME = XÓA HOẶC BỎ TRỐNG CLASS .dark */
-.dark {}
+.dark {
+}
 
 /* =====================
    BASE STYLES
 ===================== */
 @layer base {
   * {
-  @apply border-border focus-visible:outline focus-visible:outline-primary/50;
+    @apply border-border focus-visible:outline focus-visible:outline-primary/50;
   }
 
   body {
@@ -64,13 +65,19 @@
   }
 
   /* Heading màu vàng */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-primary;
   }
 
   /* Button mặc định */
-  button, .btn {
-    @apply bg-primary text-primary-foreground font-medium rounded px-4 py-2;
+  button,
+  .btn {
+    @apply bg-primary text-primary-foreground font-medium rounded px-4 py-2 cursor-pointer;
   }
 
   /* Nếu cần variant: button secondary */
