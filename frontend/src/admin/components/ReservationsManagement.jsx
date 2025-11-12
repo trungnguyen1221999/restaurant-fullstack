@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getAllReservations } from "@/api/reservation.api";
 import DeleteReservationPopup from "./ReservationComponents/DeleteReservationPopup";
 import AddReservationPopup from "./ReservationComponents/AddReservationPopup";
+import EditReservationPopup from "./ReservationComponents/EditReservationPopup";
 
 const ReservationsManagement = () => {
   const [reservations, setReservations] = useState([]);
@@ -166,14 +167,14 @@ const ReservationsManagement = () => {
           isOpen={showAddModal}
         />
       )}
-      {/* {showEditPopup && (
+      {showEditPopup && (
         <EditReservationPopup
           setIsUpdate={setIsUpdate}
           isUpdate={isUpdate}
           setOpen={setShowEditPopup}
           reservationId={selectedReservation}
         />
-      )}  */}
+      )}
     </div>
   );
 };

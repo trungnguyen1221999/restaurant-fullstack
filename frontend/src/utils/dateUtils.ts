@@ -1,20 +1,24 @@
 /**
  * Date and time utilities for restaurant booking
  */
-
 export const generateAvailableDates = (daysCount: number = 14) => {
   const dates = [];
+  const today = new Date();
   for (let i = 0; i < daysCount; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
-    dates.push({
-      value: date.toISOString().split("T")[0],
-      label: date.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      }),
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+
+    // value = YYYY-MM-DD
+    const value = date.toISOString().split("T")[0];
+
+    // label = ví dụ: Thu, Nov 14
+    const label = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
     });
+
+    dates.push({ value, label });
   }
   return dates;
 };

@@ -1,27 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChefHat, Check, X } from "lucide-react";
+import { X, ChefHat, Check } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 
-import { createReservation } from "@/api/reservation.api";
-import { PersonalInfoSection } from "@/components/booking/PersonalInfoSection";
-import { BookingDetailsSection } from "@/components/booking/BookingDetailsSection";
-import { SpecialRequestsSection } from "@/components/booking/SpecialRequestsSection";
-import { TableSelectionSection } from "@/components/booking/TableSelectionSection";
 import {
   reservationSchema,
   type ReservationFormData,
 } from "@/schemas/reservationSchema";
+import {
+  getReservationById,
+  updateReservationById,
+} from "@/api/reservation.api";
+import { PersonalInfoSection } from "@/components/booking/PersonalInfoSection";
+import { BookingDetailsSection } from "@/components/booking/BookingDetailsSection";
+import { SpecialRequestsSection } from "@/components/booking/SpecialRequestsSection";
+import { TableSelectionSection } from "@/components/booking/TableSelectionSection";
 
-interface AddReservationPopupProps {
+interface EditReservationPopupProps {
+  reservationId: string;
   setOpen: (open: boolean) => void;
   setIsUpdate: (b: boolean) => void;
   isUpdate: boolean;
 }
 
-const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
+const EditReservationPopup: React.FC<EditReservationPopupProps> = ({
+  reservationId,
   setOpen,
   setIsUpdate,
   isUpdate,
@@ -49,17 +54,47 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
     mode: "onChange",
   });
 
-  const reservationMutation = useMutation({
-    mutationFn: (payload: any) => createReservation(payload),
+  // 🔹 Load reservation details
+  const getReservationMutation = useMutation({
+    mutationFn: async () => await getReservationById(reservationId),
+    onSuccess: (data) => {
+      const res = data.data.reservation;
+      reset({
+        name: res.customerInfo.name,
+        email: res.customerInfo.email,
+        phone: res.customerInfo.phone,
+        date: res.reservationDetails.date.split("T")[0],
+        time: res.reservationDetails.time,
+        guests: res.reservationDetails.guests.toString(),
+        tablePreference:
+          res.reservationDetails.tablePreference || "Standard Table",
+        specialRequests: res.reservationDetails.specialRequests || "",
+      });
+      setSelectedTable(
+        res.reservationDetails.tablePreference || "Standard Table"
+      );
+    },
+    onError: (err: any) => {
+      toast.error("Failed to fetch reservation details: " + err.message);
+    },
+  });
+
+  useEffect(() => {
+    if (!reservationId) return;
+    getReservationMutation.mutate();
+  }, [reservationId]);
+
+  // 🔹 Mutation update reservation
+  const updateReservationMutation = useMutation({
+    mutationFn: async (payload: any) =>
+      updateReservationById(reservationId, payload),
     onSuccess: () => {
-      toast.success("Reservation created successfully");
+      toast.success("Reservation updated successfully");
       setIsUpdate(!isUpdate);
-      reset();
-      setSelectedTable("");
       setOpen(false);
     },
     onError: (err: any) => {
-      toast.error("Failed to create reservation: " + err.message);
+      toast.error("Failed to update reservation: " + err.message);
     },
   });
 
@@ -86,15 +121,15 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
       reservationDetails: {
         date: data.date,
         time: data.time,
-        guests: data.guests,
+        guests: Number(data.guests),
         tablePreference: data.tablePreference,
         specialRequests: data.specialRequests,
       },
     };
-    reservationMutation.mutate(payload);
+    updateReservationMutation.mutate(payload);
   };
 
-  // 🔹 Ngăn scroll khi popup mở
+  // 🔹 Prevent scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -104,34 +139,30 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex md:items-center justify-center overflow-y-auto "
+      className="fixed inset-0 z-50 flex md:items-center justify-center max-h-screen overflow-y-auto"
       onClick={() => setOpen(false)}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
-      {/* Popup */}
       <div
-        className="relative bg-black/30 backdrop-blur-sm border border-border/50 rounded-2xl shadow-2xl w-full max-w-6xl mx-4 p-6 md:p-8 z-10 animate-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()} // chặn click nổi bọt
+        onClick={(e) => e.stopPropagation()}
+        className="relative bg-black/30 backdrop-blur-sm border border-border/50 rounded-2xl shadow-2xl w-full max-w-6xl mx-4 p-8 z-10 animate-in zoom-in-95 duration-200"
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 relative">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <ChefHat className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold text-white">
-              Reservation Details
-            </h2>
+            <h2 className="text-2xl font-bold text-white">Edit Reservation</h2>
           </div>
           <div
             onClick={() => setOpen(false)}
-            className="p-2  hover:bg-gray-700/50 rounded-lg transition-all duration-200 z-[100] cursor-pointer absolute top-0 right-0 "
+            className="p-2 hover:bg-gray-700/50 rounded-lg transition-all duration-200"
           >
             <X className="w-5 h-5 text-red-500" />
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-12">
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <PersonalInfoSection register={register} errors={errors} />
@@ -155,13 +186,13 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
               ) : (
                 <>
                   <Check className="w-5 h-5" />
-                  Confirm Reservation
+                  Update Reservation
                 </>
               )}
             </button>
           </form>
 
-          {/* Table Selection */}
+          {/* Table Section */}
           <TableSelectionSection
             selectedTable={selectedTable}
             onTableSelect={handleTableSelect}
@@ -173,4 +204,4 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
   );
 };
 
-export default AddReservationPopup;
+export default EditReservationPopup;

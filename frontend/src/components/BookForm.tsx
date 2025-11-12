@@ -39,7 +39,7 @@ const BookForm = () => {
       time: "12:00",
       guests: "2",
       specialRequests: "",
-      tableType: "",
+      tablePreference: "Standard Table",
     },
     mode: "onChange",
   });
@@ -55,10 +55,17 @@ const BookForm = () => {
       toast.error("Failed to submit reservation: " + err.message);
     },
   });
-
   const handleTableSelect = (tableId: string) => {
     setSelectedTable(tableId);
-    setValue("tableType", tableId, { shouldValidate: true });
+    setValue(
+      "tablePreference",
+      tableId as
+        | "Intimate Corner"
+        | "Standard Table"
+        | "Family Table"
+        | "Premium Booth",
+      { shouldValidate: true }
+    );
   };
 
   const onSubmit = (data: ReservationFormData) => {
@@ -72,7 +79,7 @@ const BookForm = () => {
         date: data.date,
         time: data.time,
         guests: Number(data.guests),
-        tableType: data.tableType,
+        tablePreference: data.tablePreference,
         specialRequests: data.specialRequests,
       },
     };
@@ -136,7 +143,7 @@ const BookForm = () => {
               <TableSelectionSection
                 selectedTable={selectedTable}
                 onTableSelect={handleTableSelect}
-                error={errors.tableType?.message}
+                error={errors.tablePreference?.message}
               />
             </div>
           </div>

@@ -14,7 +14,12 @@ export const reservationSchema = z.object({
   guests: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
     message: "At least one guest is required",
   }),
-  tableType: z.string().min(1, "Table type is required"),
+  tablePreference: z.enum([
+    "Intimate Corner",
+    "Standard Table",
+    "Family Table",
+    "Premium Booth",
+  ]),
   specialRequests: z.string().optional(),
 });
 
