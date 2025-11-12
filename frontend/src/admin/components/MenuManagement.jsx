@@ -6,12 +6,14 @@ import { getAllMenus } from "@/api/menu.api";
 import DeleteMenuPopup from "./DeleteMenuPopup";
 import AddMenuPopup from "./AddMenuPopup";
 import EditMenuPopup from "./EditMenuPopup";
+import MenuSearch from "./MenuSearch";
 
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("");
@@ -37,14 +39,31 @@ const MenuManagement = () => {
   }, [isUpdate]);
 
   useEffect(() => {
-    if (selectedCategory === "All") {
-      setFilteredItems(menuItems);
-    } else {
-      setFilteredItems(
-        menuItems.filter((item) => item.categoryName === selectedCategory)
+    let filtered = menuItems;
+
+    // Filter by category
+    if (selectedCategory !== "All") {
+      filtered = filtered.filter((item) => item.categoryName === selectedCategory);
+    }
+
+    // Filter by search term
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.categoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.ingredients?.some(ingredient => 
+          ingredient.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
     }
-  }, [selectedCategory, menuItems]);
+
+    setFilteredItems(filtered);
+  }, [selectedCategory, menuItems, searchTerm]);
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
 
   return (
     <div className="p-6 space-y-8">
@@ -58,14 +77,19 @@ const MenuManagement = () => {
             Manage your restaurant menu items effortlessly
           </p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-5 py-3 bg-[var(--primary)] text-black font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-[var(--primary)]/30"
-        >
-          <Plus className="w-4 h-4" />
-          Add Menu Item
-        </button>
+         <MenuSearch 
+            onSearch={handleSearch}
+            placeholder="Search menu items, ingredients..."
+          />
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-5 py-3 bg-[var(--primary)] text-black font-semibold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-[var(--primary)]/30"
+          >
+            <Plus className="w-4 h-4" />
+            Add Menu Item
+          </button>
       </div>
+     
 
       {/* Category Filter */}
       <div className="flex flex-wrap gap-2 mb-4">

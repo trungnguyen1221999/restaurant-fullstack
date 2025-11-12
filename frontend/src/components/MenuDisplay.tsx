@@ -3,6 +3,7 @@ import { ChefHat, Utensils, Pizza, Coffee, Soup, Clock, ChevronLeft, ChevronRigh
 import { getAllMenus } from "@/api/menu.api";
 import { getAllCategories } from "@/api/category.api";
 import ProductDetailPopup from "./ProductDetailPopup";
+import MenuSearch from "../admin/components/MenuSearch";
 
 interface MenuImage {
   url: string;
@@ -24,6 +25,7 @@ const MenuDisplay: React.FC = () => {
   const [active, setActive] = useState<string>("All");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -81,10 +83,35 @@ const MenuDisplay: React.FC = () => {
     }
   };
 
-  const filteredItems =
-    active === "All"
-      ? menuItems
-      : menuItems.filter((item) => item.categoryName === active);
+  // Filter items by category and search
+  const filteredItems = React.useMemo(() => {
+    let filtered = menuItems;
+
+    // Filter by category
+    if (active !== "All") {
+      filtered = filtered.filter((item) => item.categoryName === active);
+    }
+
+    // Filter by search term
+    if (searchTerm.trim()) {
+      filtered = filtered.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.categoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.ingredients?.some(ingredient => 
+          ingredient.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+
+    return filtered;
+  }, [menuItems, active, searchTerm]);
+
+  // Handle search
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   // Reset to first page when category changes
   React.useEffect(() => {
@@ -117,6 +144,14 @@ const MenuDisplay: React.FC = () => {
         <p className="text-center text-white text-lg max-w-2xl mx-auto">
           Discover our carefully crafted dishes made with the finest ingredients
         </p>
+      </div>
+
+      {/* Search Bar */}
+      <div className="container mx-auto px-6 mb-8 flex justify-center">
+        <MenuSearch 
+          onSearch={handleSearch}
+          placeholder="Search dishes, ingredients, categories..."
+        />
       </div>
 
       {/* Category Buttons */}
