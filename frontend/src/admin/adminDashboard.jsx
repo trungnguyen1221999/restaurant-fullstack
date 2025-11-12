@@ -19,7 +19,7 @@ const AdminLayout = () => {
           {isSidebarOpen ? (
             <X className="w-6 h-6" />
           ) : (
-            <Menu className="w-6 h-6" />
+            <Menu className="w-6 h-6 text-primary" />
           )}
         </button>
       </div>
