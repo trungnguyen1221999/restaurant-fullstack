@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChefHat, Utensils, Pizza, Coffee, Soup, Clock } from "lucide-react";
+import { ChefHat, Utensils, Pizza, Coffee, Soup, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { getAllMenus } from "@/api/menu.api";
 import { getAllCategories } from "@/api/category.api";
 import ProductDetailPopup from "./ProductDetailPopup";
@@ -24,6 +24,10 @@ const MenuDisplay: React.FC = () => {
   const [active, setActive] = useState<string>("All");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const ITEMS_PER_PAGE = 6;
 
   // Popup state
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
@@ -81,6 +85,25 @@ const MenuDisplay: React.FC = () => {
     active === "All"
       ? menuItems
       : menuItems.filter((item) => item.categoryName === active);
+
+  // Reset to first page when category changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [active]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedItems = filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Smooth scroll to menu section
+    const menuSection = document.getElementById('menu');
+    if (menuSection) {
+      menuSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="menu" className="bg-background text-foreground py-20">
@@ -140,7 +163,7 @@ const MenuDisplay: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {filteredItems.map((item) => (
+            {paginatedItems.map((item) => (
               <div
                 key={item._id}
                 onClick={() => setSelectedProduct(item)}
@@ -178,6 +201,82 @@ const MenuDisplay: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && filteredItems.length > ITEMS_PER_PAGE && (
+          <div className="flex justify-center items-center mt-12 gap-2">
+            {/* Previous Button */}
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-300 font-medium
+                ${
+                  currentPage === 1
+                    ? "bg-transparent border-border/30 text-secondary/50 cursor-not-allowed"
+                    : "bg-transparent border-border text-secondary hover:border-primary hover:text-primary hover:shadow-md"
+                }
+              `}
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Previous</span>
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                const isCurrentPage = page === currentPage;
+                const shouldShow = 
+                  page === 1 || 
+                  page === totalPages || 
+                  (page >= currentPage - 1 && page <= currentPage + 1);
+                
+                if (!shouldShow && page !== currentPage - 2 && page !== currentPage + 2) {
+                  return null;
+                }
+                
+                if (page === currentPage - 2 || page === currentPage + 2) {
+                  return (
+                    <span key={page} className="px-2 py-2 text-secondary/50">
+                      ...
+                    </span>
+                  );
+                }
+                
+                return (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`w-10 h-10 rounded-lg border-2 transition-all duration-300 font-semibold
+                      ${
+                        isCurrentPage
+                          ? "bg-primary border-primary text-black shadow-lg scale-105"
+                          : "bg-transparent border-border text-secondary hover:border-primary hover:text-primary hover:shadow-md"
+                      }
+                    `}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-300 font-medium
+                ${
+                  currentPage === totalPages
+                    ? "bg-transparent border-border/30 text-secondary/50 cursor-not-allowed"
+                    : "bg-transparent border-border text-secondary hover:border-primary hover:text-primary hover:shadow-md"
+                }
+              `}
+            >
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         )}
       </div>
