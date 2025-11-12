@@ -123,12 +123,12 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
               Reservation Details
             </h2>
           </div>
-          <div
+          <button
             onClick={() => setOpen(false)}
             className="p-2  hover:bg-gray-700/50 rounded-lg transition-all duration-200 z-[100] cursor-pointer absolute top-0 right-0 "
           >
-            <X className="w-5 h-5 text-red-500" />
-          </div>
+            <X className="w-5 h-5 text-white" />
+          </button>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">

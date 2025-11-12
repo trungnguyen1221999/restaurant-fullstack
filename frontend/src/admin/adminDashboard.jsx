@@ -1,64 +1,54 @@
 import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import DashboardOverview from "./components/DashboardOverview";
-import CategoriesManagement from "./components/CategoriesManagement";
-import MenuManagement from "./components/MenuManagement";
-import ReservationsManagement from "./components/ReservationsManagement";
-import { Heart } from "lucide-react";
+import { Heart, Menu, X } from "lucide-react";
 
-const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+const AdminLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return <DashboardOverview />;
-      case "categories":
-        return <CategoriesManagement />;
-      case "menu":
-        return <MenuManagement />;
-      case "reservations":
-        return <ReservationsManagement />;
-      case "users":
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-white mb-4">
-              Users Management
-            </h1>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-              <p className="text-gray-400">
-                Users management component coming soon...
-              </p>
-            </div>
-          </div>
-        );
-      case "settings":
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-white mb-4">Settings</h1>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-              <p className="text-gray-400">Settings component coming soon...</p>
-            </div>
-          </div>
-        );
-      default:
-        return <DashboardOverview />;
-    }
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-950">
+      {/* Header (Mobile) */}
+      <div className="flex items-center justify-between bg-gray-900 text-white p-4 md:hidden">
+        <h1 className="text-lg font-bold">Admin Panel</h1>
+        <button onClick={toggleSidebar} className="p-2 rounded-md bg-gray-800">
+          {isSidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
+        </button>
+      </div>
+
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <div
+          className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 md:relative md:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <Sidebar />
+        </div>
 
-        {/* Main Content */}
+        {/* Overlay khi sidebar mở trên mobile */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={toggleSidebar}
+          ></div>
+        )}
+
+        {/* Nội dung của route con */}
         <div className="flex-1 overflow-auto min-h-screen pb-6">
-          {renderContent()}
+          <Outlet />
         </div>
       </div>
 
-      {/* Bottom Footer */}
+      {/* Footer */}
       <footer className="border-t border-primary/20 pt-4 flex flex-col md:flex-row justify-between items-center gap-4 px-6 mb-4">
         <div className="flex items-center gap-2 text-white/60">
           <span>© 2025 KAI Restaurant. All rights reserved.</span>
@@ -82,4 +72,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default AdminLayout;

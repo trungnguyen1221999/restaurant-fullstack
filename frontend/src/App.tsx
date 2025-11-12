@@ -1,4 +1,3 @@
-import React from "react";
 import BookForm from "./components/BookForm";
 import Hero from "./components/Hero";
 import MenuDisplay from "./components/MenuDisplay";
@@ -7,27 +6,47 @@ import Contact from "./components/Contact";
 import AdminLoginPage from "./admin/adminLoginPage";
 import { Route, Routes } from "react-router-dom";
 import CategoryDisplay from "./components/CategoryDisplay";
-import AdminDashboard from "./admin/adminDashboard";
+import CategoriesManagement from "./admin/components/CategoriesManagement";
+import AdminLayout from "./admin/adminDashboard";
+import DashboardOverview from "./admin/components/DashboardOverview";
+import MenuManagement from "./admin/components/MenuManagement";
+import ReservationsManagement from "./admin/components/ReservationsManagement";
 
 function App() {
   return (
     <Routes>
-        <Route path="/admin" element={<AdminLoginPage />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin" element={<AdminLoginPage />} />
+      {/* Tất cả route trong layout admin */}
+      <Route path="/admin/dashboard" element={<AdminLayout />}>
+        <Route index element={<DashboardOverview />} />
+        <Route path="categories" element={<CategoriesManagement />} />
+        <Route path="menu" element={<MenuManagement />} />
+        <Route path="reservations" element={<ReservationsManagement />} />
         <Route
-          path="/"
+          path="users"
           element={
-            <>
-              <NavBar />
-              <Hero />
-              <CategoryDisplay />
-              <MenuDisplay />
-              <BookForm />
-              <Contact />
-            </>
+            <div className="p-6 text-white">Users Management (coming soon)</div>
           }
         />
-      </Routes>
+        <Route
+          path="settings"
+          element={<div className="p-6 text-white">Settings (coming soon)</div>}
+        />
+      </Route>
+      <Route
+        path="/"
+        element={
+          <>
+            <NavBar />
+            <Hero />
+            <CategoryDisplay />
+            <MenuDisplay />
+            <BookForm />
+            <Contact />
+          </>
+        }
+      />
+    </Routes>
   );
 }
 
