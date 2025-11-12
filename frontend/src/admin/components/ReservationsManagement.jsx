@@ -11,37 +11,69 @@ import {
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { getAllReservations } from "@/api/reservation.api";
+
 import DeleteReservationPopup from "./ReservationComponents/DeleteReservationPopup";
 import AddReservationPopup from "./ReservationComponents/AddReservationPopup";
 import EditReservationPopup from "./ReservationComponents/EditReservationPopup";
+import FilterNav from "./ReservationComponents/FilterNav"; // ✅ Import bộ lọc
 
 const ReservationsManagement = () => {
   const [reservations, setReservations] = useState([]);
+  const [filteredReservations, setFilteredReservations] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState("All");
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
 
-  const getAllReservationsMutaion = useMutation({
+  // ✅ Lấy tất cả reservation
+  const getAllReservationsMutation = useMutation({
     mutationFn: async () => await getAllReservations(),
     onSuccess: (data) => {
-      setReservations(data.data.reservations);
+      const res = data.data.reservations;
+      setReservations(res);
+      setFilteredReservations(res);
       toast.success("Reservations loaded successfully");
     },
-    onError: (error) => {
-      toast.error("Failed to load reservations");
-    },
+    onError: () => toast.error("Failed to load reservations"),
   });
 
   useEffect(() => {
-    getAllReservationsMutaion.mutate();
+    getAllReservationsMutation.mutate();
   }, [isUpdate]);
+
+  // ✅ Hàm lọc dữ liệu
+  const handleFilter = (filters) => {
+    const filtered = reservations.filter((r) => {
+      const details = r.reservationDetails;
+
+      // Lọc theo ngày
+      const matchesDate =
+        !filters.date ||
+        new Date(details.date).toISOString().split("T")[0] === filters.date;
+
+      // Lọc theo loại bàn
+      const matchesTable =
+        !filters.tablePreference ||
+        details.tablePreference === filters.tablePreference;
+
+      // Lọc theo số khách
+      const matchesGuests =
+        !filters.guests || Number(details.guests) === Number(filters.guests);
+
+      // Lọc theo ghi chú
+      const matchesNotes = !filters.notes || (r.notes && r.notes.trim() !== "");
+
+      return matchesDate && matchesTable && matchesGuests && matchesNotes;
+    });
+
+    setFilteredReservations(filtered);
+  };
 
   return (
     <div className="p-6 space-y-8 bg-gray-900 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white mb-1">
             Reservations Management
@@ -59,9 +91,12 @@ const ReservationsManagement = () => {
         </button>
       </div>
 
+      {/* ✅ Bộ lọc */}
+      <FilterNav onFilter={handleFilter} />
+
       {/* Reservations List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reservations.map((reservation) => (
+        {filteredReservations.map((reservation) => (
           <div
             key={reservation._id}
             className="bg-gray-800 border border-gray-700 rounded-lg p-5 hover:bg-gray-700 transition-colors duration-200 relative"
@@ -106,6 +141,13 @@ const ReservationsManagement = () => {
                     </p>
                   </div>
                 )}
+
+                <div className="mt-3">
+                  <p className="text-sm text-gray-400">
+                    <span className="font-medium text-gray-300">Notes:</span>{" "}
+                    {reservation.notes ? reservation.notes : "None"}
+                  </p>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -136,7 +178,7 @@ const ReservationsManagement = () => {
       </div>
 
       {/* Empty State */}
-      {reservations.length === 0 && (
+      {filteredReservations.length === 0 && (
         <div className="text-center py-16">
           <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
             <Calendar className="w-10 h-10 text-gray-500" />
@@ -145,10 +187,11 @@ const ReservationsManagement = () => {
             No reservations found
           </h3>
           <p className="text-gray-400">
-            Try adjusting your search terms or add a new reservation.
+            Try adjusting your filters or add a new reservation.
           </p>
         </div>
       )}
+
       {/* Modals */}
       {showDeletePopup && (
         <DeleteReservationPopup

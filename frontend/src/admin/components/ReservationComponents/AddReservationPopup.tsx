@@ -44,7 +44,7 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
       time: "12:00",
       guests: "2",
       tablePreference: "Standard Table",
-      specialRequests: "",
+      notes: "",
     },
     mode: "onChange",
   });
@@ -88,8 +88,8 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
         time: data.time,
         guests: data.guests,
         tablePreference: data.tablePreference,
-        specialRequests: data.specialRequests,
       },
+      notes: data.notes,
     };
     reservationMutation.mutate(payload);
   };

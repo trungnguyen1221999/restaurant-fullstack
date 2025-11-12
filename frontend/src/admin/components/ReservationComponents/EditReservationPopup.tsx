@@ -49,7 +49,7 @@ const EditReservationPopup: React.FC<EditReservationPopupProps> = ({
       time: "12:00",
       guests: "2",
       tablePreference: "Standard Table",
-      specialRequests: "",
+      notes: "",
     },
     mode: "onChange",
   });
@@ -68,7 +68,7 @@ const EditReservationPopup: React.FC<EditReservationPopupProps> = ({
         guests: res.reservationDetails.guests.toString(),
         tablePreference:
           res.reservationDetails.tablePreference || "Standard Table",
-        specialRequests: res.reservationDetails.specialRequests || "",
+        notes: res.reservationDetails.notes || "",
       });
       setSelectedTable(
         res.reservationDetails.tablePreference || "Standard Table"
@@ -123,8 +123,8 @@ const EditReservationPopup: React.FC<EditReservationPopupProps> = ({
         time: data.time,
         guests: Number(data.guests),
         tablePreference: data.tablePreference,
-        specialRequests: data.specialRequests,
       },
+      notes: data.notes,
     };
     updateReservationMutation.mutate(payload);
   };

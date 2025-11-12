@@ -20,7 +20,7 @@ export const reservationSchema = z.object({
     "Family Table",
     "Premium Booth",
   ]),
-  specialRequests: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export type ReservationFormData = z.infer<typeof reservationSchema>;

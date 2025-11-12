@@ -38,7 +38,7 @@ const BookForm = () => {
       date: "",
       time: "12:00",
       guests: "2",
-      specialRequests: "",
+      notes: "",
       tablePreference: "Standard Table",
     },
     mode: "onChange",
@@ -80,8 +80,8 @@ const BookForm = () => {
         time: data.time,
         guests: Number(data.guests),
         tablePreference: data.tablePreference,
-        specialRequests: data.specialRequests,
       },
+      notes: data.notes,
     };
 
     reservationMutation.mutate(payload);

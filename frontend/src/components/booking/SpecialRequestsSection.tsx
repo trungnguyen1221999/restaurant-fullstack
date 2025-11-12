@@ -19,16 +19,16 @@ export const SpecialRequestsSection = ({
         Special Requests (Optional)
       </label>
       <textarea
-        {...register("specialRequests")}
+        {...register("notes")}
         rows={3}
         className={`w-full bg-black/60 border rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none transition-colors resize-none ${
-          errors.specialRequests
+          errors.notes
             ? "border-red-500 focus:border-red-400"
             : "border-border focus:border-primary"
         }`}
         placeholder="Dietary restrictions, celebrations, accessibility needs..."
       />
-      <ErrorMessage message={errors.specialRequests?.message} />
+      <ErrorMessage message={errors.notes?.message} />
     </div>
   );
 };

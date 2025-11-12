@@ -2,25 +2,25 @@ import Reservation from "../models/Reservation.js";
 
 export const createReservation = async (req, res) => {
   try {
-    const { customerInfo, reservationDetails, note } = req.body;
+    const { customerInfo, reservationDetails, notes } = req.body;
 
     // Check if the selected date/time is available
     const existingReservation = await Reservation.findOne({
-      customerInfo , reservationDetails
+      customerInfo,
+      reservationDetails,
     });
 
     if (existingReservation) {
       return res.status(400).json({
         success: false,
-        message:
-          "You already have a reservation for this time slot.",
+        message: "You already have a reservation for this time slot.",
       });
     }
 
     const reservation = new Reservation({
       customerInfo,
       reservationDetails,
-      note
+      notes,
     });
 
     await reservation.save();
@@ -68,17 +68,16 @@ export const getReservationById = async (req, res) => {
 
 export const getAllReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find()
-          .sort({ createdAt: -1 });
-      if (!reservations || reservations.length === 0) {
-          return res.status(404).json({
-                success: false,
-                message: "No reservations found",
-              });
+    const reservations = await Reservation.find().sort({ createdAt: -1 });
+    if (!reservations || reservations.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No reservations found",
+      });
     }
     res.json({
-        success: true,
-        message: "Reservations fetched successfully",
+      success: true,
+      message: "Reservations fetched successfully",
       data: {
         reservations,
       },
@@ -91,7 +90,6 @@ export const getAllReservations = async (req, res) => {
     });
   }
 };
-
 
 export const deleteReservation = async (req, res) => {
   try {
@@ -122,11 +120,11 @@ export const deleteReservation = async (req, res) => {
 export const updateReservation = async (req, res) => {
   try {
     const { id } = req.params;
-    const { customerInfo, reservationDetails, note } = req.body;
+    const { customerInfo, reservationDetails, notes } = req.body;
 
     const reservation = await Reservation.findByIdAndUpdate(
       id,
-      { customerInfo, reservationDetails, note },
+      { customerInfo, reservationDetails, notes },
       { new: true }
     );
 
