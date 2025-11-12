@@ -39,7 +39,7 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
 
   const [imageFiles, setImageFiles] = useState([]);
   const [originalImages, setOriginalImages] = useState([]);
-  const [deletedImages, setDeletedImages] = useState([]); // mới: lưu ảnh cũ bị xóa
+  const [deletedImages, setDeletedImages] = useState([]);
 
   const getMenuMutation = useMutation({
     mutationFn: async () => await getMenuById(menuId),
@@ -57,8 +57,7 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
       setDeletedImages([]);
       setImageFiles([]);
     },
-    onError: (err) =>
-      toast.error("Failed to fetch menu details: " + err.message),
+    onError: (err) => toast.error("Failed to fetch menu details: " + err.message),
   });
 
   useEffect(() => {
@@ -78,10 +77,10 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
         values.ingredients.split(",").map((i) => i.trim())
       );
 
-      // thêm ảnh mới
+      // Thêm ảnh mới
       imageFiles.forEach((file) => formData.append("images", file));
 
-      // gửi danh sách ảnh cũ bị xóa
+      // Gửi danh sách ảnh bị xóa
       formData.append("deletedImages", JSON.stringify(deletedImages));
 
       return await editMenuById(menuId, formData);
@@ -110,9 +109,7 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-white">Edit Menu</h2>
-              <p className="text-sm text-gray-400">
-                Update menu item information
-              </p>
+              <p className="text-sm text-gray-400">Update menu item information</p>
             </div>
           </div>
           <button
@@ -125,55 +122,24 @@ const EditMenuPopup = ({ setOpen, menuId, setIsUpdate, isUpdate }) => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6">
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Left: Image Uploader */}
             <div className="flex-shrink-0 w-full md:w-1/2">
               <ImageUploader
                 originalImages={originalImages}
                 imageFiles={imageFiles}
                 setOriginalImages={setOriginalImages}
                 setImageFiles={setImageFiles}
-                deletedImages={deletedImages} // thêm prop
-                setDeletedImages={setDeletedImages} // thêm prop
+                deletedImages={deletedImages}
+                setDeletedImages={setDeletedImages}
               />
             </div>
 
-            {/* Right: Inputs */}
             <div className="flex-1 flex flex-col gap-4">
-              <TextInput
-                label="Menu Name"
-                icon={Type}
-                {...register("name")}
-                error={formState.errors.name}
-              />
-              <TextInput
-                label="Description"
-                icon={List}
-                type="textarea"
-                {...register("description")}
-                error={formState.errors.description}
-              />
-              <TextInput
-                label="Price"
-                icon={Euro}
-                {...register("price")}
-                error={formState.errors.price}
-              />
-              <TextInput
-                label="Category"
-                icon={Package}
-                {...register("categoryName")}
-                error={formState.errors.categoryName}
-              />
-              <TextInput
-                label="Ingredients (comma separated)"
-                icon={List}
-                {...register("ingredients")}
-                error={formState.errors.ingredients}
-              />
-              <ActionButtons
-                onCancel={() => setOpen(false)}
-                isLoading={updateMenuMutation.isPending}
-              />
+              <TextInput label="Menu Name" icon={Type} {...register("name")} error={formState.errors.name} />
+              <TextInput label="Description" icon={List} type="textarea" {...register("description")} error={formState.errors.description} />
+              <TextInput label="Price" icon={Euro} {...register("price")} error={formState.errors.price} />
+              <TextInput label="Category" icon={Package} {...register("categoryName")} error={formState.errors.categoryName} />
+              <TextInput label="Ingredients (comma separated)" icon={List} {...register("ingredients")} error={formState.errors.ingredients} />
+              <ActionButtons onCancel={() => setOpen(false)} isLoading={updateMenuMutation.isPending} />
             </div>
           </div>
         </form>

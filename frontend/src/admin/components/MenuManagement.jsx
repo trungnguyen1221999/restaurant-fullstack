@@ -19,31 +19,23 @@ const MenuManagement = () => {
   const [showEditPopup, setShowEditPopup] = useState(false);
 
   const getMenuItemsMutation = useMutation({
-    mutationFn: async () => {
-      const response = await getAllMenus();
-      return response;
-    },
+    mutationFn: async () => await getAllMenus(),
     onSuccess: (data) => {
       const items = data.data.menuItems;
       setMenuItems(items);
       setFilteredItems(items);
 
-      // Lấy danh sách category duy nhất + "All"
       const cats = Array.from(new Set(items.map((i) => i.categoryName)));
       setCategories(["All", ...cats]);
     },
-    onError: (error) => {
-      toast.error(
-        error.message || "An error occurred while fetching menu items"
-      );
-    },
+    onError: (error) =>
+      toast.error(error.message || "An error occurred while fetching menu items"),
   });
 
   useEffect(() => {
     getMenuItemsMutation.mutate();
   }, [isUpdate]);
 
-  // Filter menu items khi chọn category
   useEffect(() => {
     if (selectedCategory === "All") {
       setFilteredItems(menuItems);
@@ -101,9 +93,9 @@ const MenuManagement = () => {
           >
             {/* Image */}
             <div className="aspect-square relative w-full overflow-hidden bg-gray-800">
-              {item.images?.[0] ? (
+              {item.images?.[0]?.url ? (
                 <img
-                  src={item.images[0]}
+                  src={item.images[0].url} // ✅ Lấy url từ object
                   alt={item.name}
                   className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 bg-transparent"
                 />
@@ -138,15 +130,11 @@ const MenuManagement = () => {
                 <span className="font-semibold text-gray-300">
                   Description:
                 </span>
-                <span className="line-clamp-2">
-                  {item.description || "N/A"}
-                </span>
+                <span className="line-clamp-2">{item.description || "N/A"}</span>
               </div>
 
               <div className="flex flex-col gap-1 text-sm text-gray-400">
-                <span className="font-semibold text-gray-300">
-                  Ingredients:
-                </span>
+                <span className="font-semibold text-gray-300">Ingredients:</span>
                 <span className="line-clamp-2">
                   {item.ingredients?.join(", ") || "N/A"}
                 </span>

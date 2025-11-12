@@ -1,6 +1,7 @@
-import { uploadMultipleImages } from "../helpers/uploadImage.js";
+import { uploadMultipleImages, deleteImage } from "../helpers/uploadImage.js";
 import MenuItem from "../models/MenuItem.js";
 import Category from "../models/Category.js";
+
 export const getMenuItems = async (req, res) => {
   try {
     const menuItems = await MenuItem.find().sort({ createdAt: -1 });
@@ -101,39 +102,58 @@ export const createMenuItem = async (req, res) => {
   }
 };
 
+
 export const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const menuItem = await MenuItem.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    // Parse deletedImages từ FormData
+    let deletedImagesArray = [];
+    if (req.body.deletedImages) {
+      try {
+        deletedImagesArray = JSON.parse(req.body.deletedImages);
+      } catch {
+        deletedImagesArray = Array.isArray(req.body.deletedImages)
+          ? req.body.deletedImages
+          : [];
+      }
+    }
 
+    const menuItem = await MenuItem.findById(id);
     if (!menuItem) {
-      return res.status(404).json({
-        success: false,
-        message: "Menu item not found",
-      });
+      return res.status(404).json({ success: false, message: "Menu item not found" });
     }
-    const images = req.files;
-    if (images && images.length > 0) {
-      const imageUrls = await uploadMultipleImages(images);
-      menuItem.images = imageUrls;
-      await menuItem.save();
+
+    // 1️⃣ Xóa ảnh cũ khỏi Cloudinary + DB
+    if (deletedImagesArray.length > 0) {
+      for (let public_id of deletedImagesArray) {
+        await deleteImage(public_id);
+        menuItem.images = menuItem.images.filter(img => img.public_id !== public_id);
+      }
     }
-    res.json({
-      success: true,
-      message: "Menu item updated successfully",
-      data: { menuItem },
-    });
+
+    // 2️⃣ Upload ảnh mới (nếu có) và append vào images hiện tại
+    if (req.files && req.files.length > 0) {
+      const newImages = await uploadMultipleImages(req.files);
+      menuItem.images.push(...newImages);
+    }
+
+    // 3️⃣ Cập nhật các field khác
+    const { name, description, price, categoryName, ingredients } = req.body;
+    if (name) menuItem.name = name;
+    if (description) menuItem.description = description;
+    if (price) menuItem.price = price;
+    if (categoryName) menuItem.categoryName = categoryName;
+    if (ingredients) menuItem.ingredients = ingredients;
+
+    await menuItem.save();
+
+    res.json({ success: true, message: "Menu item updated successfully", data: menuItem });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to update menu item",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 export const deleteMenuItem = async (req, res) => {
   try {

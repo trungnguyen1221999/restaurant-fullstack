@@ -2,25 +2,29 @@ import React, { useRef } from "react";
 import { X, Image } from "lucide-react";
 
 const ImageUploader = ({
-  originalImages,
-  imageFiles,
+  originalImages, // [{ url, public_id }]
+  imageFiles,     // File[]
   setOriginalImages,
   setImageFiles,
-  deletedImages,
+  deletedImages,  // [public_id]
   setDeletedImages,
 }) => {
   const inputRef = useRef(null);
 
+  // Chọn ảnh mới
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setImageFiles((prev) => [...prev, ...files]);
     e.target.value = null; // reset input
   };
 
+  // Xóa ảnh
   const handleRemoveImage = (index, isOriginal = false) => {
     if (isOriginal) {
       const removed = originalImages[index];
-      setDeletedImages((prev) => [...prev, removed]); // thêm vào deletedImages
+      if (removed.public_id) {
+        setDeletedImages((prev) => [...prev, removed.public_id]);
+      }
       setOriginalImages((prev) => prev.filter((_, i) => i !== index));
     } else {
       setImageFiles((prev) => prev.filter((_, i) => i !== index));
@@ -34,26 +38,16 @@ const ImageUploader = ({
       </label>
 
       <div className="flex gap-3 mb-4 flex-wrap">
-        {[...originalImages, ...imageFiles].map((item, index) => {
-          const isOriginal = typeof item === "string";
-          const src = isOriginal ? item : URL.createObjectURL(item);
+        {[...originalImages, ...imageFiles].map((item, i) => {
+          const isOriginal = item.url !== undefined;
+          const src = isOriginal ? item.url : URL.createObjectURL(item);
 
           return (
-            <div
-              key={index}
-              className="relative w-24 h-24 rounded-lg overflow-hidden"
-            >
-              <img
-                src={src}
-                alt={`Menu ${index}`}
-                className="w-full h-full object-cover"
-              />
+            <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden">
+              <img src={src} alt={`Menu ${i}`} className="w-full h-full object-cover" />
               <button
                 type="button"
-                onClick={() => {
-                  if (isOriginal) handleRemoveImage(index, true);
-                  else handleRemoveImage(index - originalImages.length);
-                }}
+                onClick={() => handleRemoveImage(isOriginal ? i : i - originalImages.length, isOriginal)}
                 className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center p-0 m-0 text-xs"
               >
                 <X className="w-3 h-3" />
@@ -67,6 +61,7 @@ const ImageUploader = ({
         <input
           type="file"
           multiple
+          accept="image/*"
           ref={inputRef}
           onChange={handleFileChange}
           className="hidden"

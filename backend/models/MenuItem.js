@@ -29,11 +29,12 @@ const menuItemSchema = new mongoose.Schema(
       required: [true, "Category name is required"],
       trim: true,
     },
-    images: {
-      type: [String],
-      required: [true, "Image is required"],
-      trim: true,
-    },
+  images: [
+  {
+    url: { type: String, required: true },
+    public_id: { type: String, required: true },
+  },
+],
     ingredients: [
       {
         type: String,

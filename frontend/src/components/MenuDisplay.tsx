@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ChefHat, Utensils, Pizza, Coffee, Soup, Clock } from "lucide-react";
 import { getAllMenus } from "@/api/menu.api";
-import { getAllCategories } from "@/api/category.api"; // ✅ import new API for categories
-import ProductDetailPopup from "./ProductDetailPopup"; // ✅ import mới
+import { getAllCategories } from "@/api/category.api";
+import ProductDetailPopup from "./ProductDetailPopup";
+
+interface MenuImage {
+  url: string;
+  public_id: string;
+}
 
 interface MenuItem {
   _id: string;
@@ -10,7 +15,7 @@ interface MenuItem {
   description: string;
   categoryName: string;
   price: number;
-  images: string[];
+  images: MenuImage[];
   ingredients: string[];
 }
 
@@ -20,23 +25,22 @@ const MenuDisplay: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // ✅ popup state
+  // Popup state
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
-  // Fetch categories and menu items
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // Fetch categories from the API
+        // Lấy danh sách category
         const categoryRes = await getAllCategories();
         const fetchedCategories = categoryRes.data.categories.map(
-          (category: { name: string }) => category.name
-        ); // Extract category names
+          (cat: { name: string }) => cat.name
+        );
         setCategories(["All", ...fetchedCategories]);
 
-        // Fetch menu items from the API
+        // Lấy danh sách menu
         const menuRes = await getAllMenus();
         const fetchedMenuItems: MenuItem[] = menuRes.data.menuItems || [];
         setMenuItems(fetchedMenuItems);
@@ -139,12 +143,12 @@ const MenuDisplay: React.FC = () => {
             {filteredItems.map((item) => (
               <div
                 key={item._id}
-                onClick={() => setSelectedProduct(item)} // ✅ mở popup
+                onClick={() => setSelectedProduct(item)}
                 className="cursor-pointer group bg-black/40 backdrop-blur-sm border border-border/50 rounded-2xl p-6 hover:border-primary/50 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2"
               >
                 <div className="relative overflow-hidden rounded-xl mb-6">
                   <img
-                    src={item.images?.[0] || "/placeholder.jpg"}
+                    src={item.images?.[0]?.url || "/placeholder.jpg"}
                     alt={item.name}
                     className="w-60 h-60 object-cover transition-transform duration-500 group-hover:scale-110 mx-auto"
                   />
@@ -178,7 +182,7 @@ const MenuDisplay: React.FC = () => {
         )}
       </div>
 
-      {/* ✅ Popup hiển thị chi tiết */}
+      {/* Popup hiển thị chi tiết */}
       {selectedProduct && (
         <ProductDetailPopup
           product={selectedProduct}
