@@ -5,6 +5,7 @@ import {
 
   deleteReservation,
   getReservationById,
+  updateReservation,
 } from "../controllers/reservationController.js";
 
 
@@ -18,5 +19,7 @@ router.get("/", getAllReservations);
 router.get("/:id", getReservationById);
 
 router.delete("/:id",  deleteReservation);
+
+router.put("/:id",  updateReservation);
 
 export default router;

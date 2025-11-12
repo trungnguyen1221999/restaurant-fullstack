@@ -13,14 +13,15 @@ export const createReservation = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "This time slot is already booked. Please choose a different time.",
+          "You already have a reservation for this time slot.",
       });
     }
 
     const reservation = new Reservation({
       customerInfo,
       reservationDetails,
-      note    });
+      note
+    });
 
     await reservation.save();
 
@@ -113,6 +114,38 @@ export const deleteReservation = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete reservation",
+      error: error.message,
+    });
+  }
+};
+
+export const updateReservation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { customerInfo, reservationDetails, note } = req.body;
+
+    const reservation = await Reservation.findByIdAndUpdate(
+      id,
+      { customerInfo, reservationDetails, note },
+      { new: true }
+    );
+
+    if (!reservation) {
+      return res.status(404).json({
+        success: false,
+        message: "Reservation not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Reservation updated successfully",
+      data: { reservation },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update reservation",
       error: error.message,
     });
   }
