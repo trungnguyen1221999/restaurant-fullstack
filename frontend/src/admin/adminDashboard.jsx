@@ -53,7 +53,7 @@ const AdminDashboard = () => {
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto min-h-screen">
+        <div className="flex-1 overflow-auto min-h-screen pb-6">
           {renderContent()}
         </div>
       </div>

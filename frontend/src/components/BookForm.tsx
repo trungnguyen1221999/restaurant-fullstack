@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChefHat, Check } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
 
 // Import schema and types
 import {
@@ -16,10 +18,11 @@ import { BookingDetailsSection } from "./booking/BookingDetailsSection";
 import { SpecialRequestsSection } from "./booking/SpecialRequestsSection";
 import { TableSelectionSection } from "./booking/TableSelectionSection";
 
+import { createReservation } from "@/api/reservation.api";
+
 const BookForm = () => {
   const [selectedTable, setSelectedTable] = useState("");
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -33,37 +36,48 @@ const BookForm = () => {
       email: "",
       phone: "",
       date: "",
-      time: "",
+      time: "12:00",
       guests: "2",
       specialRequests: "",
       tableType: "",
     },
-    mode: "onChange", // Validate on change for real-time feedback
+    mode: "onChange",
   });
 
-  // Handle table selection
+  const reservationMutation = useMutation({
+    mutationFn: async (payload: any) => await createReservation(payload),
+    onSuccess: () => {
+      toast.success("Reservation submitted successfully!");
+      reset();
+      setSelectedTable("");
+    },
+    onError: (err: any) => {
+      toast.error("Failed to submit reservation: " + err.message);
+    },
+  });
+
   const handleTableSelect = (tableId: string) => {
     setSelectedTable(tableId);
     setValue("tableType", tableId, { shouldValidate: true });
   };
 
-  // Form submission handler
-  const onSubmit = async (data: ReservationFormData) => {
-    try {
-      console.log("Reservation submitted:", data);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+  const onSubmit = (data: ReservationFormData) => {
+    const payload = {
+      customerInfo: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+      },
+      reservationDetails: {
+        date: data.date,
+        time: data.time,
+        guests: Number(data.guests),
+        tableType: data.tableType,
+        specialRequests: data.specialRequests,
+      },
+    };
 
-      // Success notification (you can replace with toast)
-      alert("Reservation submitted successfully!");
-
-      // Reset form
-      reset();
-      setSelectedTable("");
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Failed to submit reservation. Please try again.");
-    }
+    reservationMutation.mutate(payload);
   };
 
   return (
@@ -124,8 +138,6 @@ const BookForm = () => {
                 onTableSelect={handleTableSelect}
                 error={errors.tableType?.message}
               />
-
-           
             </div>
           </div>
         </div>

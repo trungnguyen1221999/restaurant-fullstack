@@ -20,24 +20,19 @@ export const generateAvailableDates = (daysCount: number = 14) => {
 };
 
 export const generateTimeSlots = () => {
-  return [
-    "11:00 AM",
-    "11:30 AM",
-    "12:00 PM",
-    "12:30 PM",
-    "1:00 PM",
-    "1:30 PM",
-    "2:00 PM",
-    "2:30 PM",
-    "6:00 PM",
-    "6:30 PM",
-    "7:00 PM",
-    "7:30 PM",
-    "8:00 PM",
-    "8:30 PM",
-    "9:00 PM",
-    "9:30 PM",
-  ];
+  const slots: string[] = [];
+  const hours = [11, 12, 13, 14, 18, 19, 20, 21]; // giờ mở cửa
+  const minutes = [0, 30]; // mỗi giờ có 2 slot: :00 và :30
+
+  for (const h of hours) {
+    for (const m of minutes) {
+      slots.push(
+        `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
+      );
+    }
+  }
+
+  return slots;
 };
 
 export const formatDate = (dateString: string) => {

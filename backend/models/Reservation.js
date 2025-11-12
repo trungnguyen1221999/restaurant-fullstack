@@ -40,17 +40,20 @@ const reservationSchema = new mongoose.Schema(
         ],
       },
       guests: {
-        type: Number,
+        type: String,
         required: [true, "Number of guests is required"],
-        min: [1, "At least 1 guest is required"],
-        max: [20, "Maximum 20 guests allowed"],
       },
       tablePreference: {
         type: String,
-        enum: ["Intimate Corner", "Standard Table", "Family Table", "Premium Booth"],
+        enum: [
+          "Intimate Corner",
+          "Standard Table",
+          "Family Table",
+          "Premium Booth",
+        ],
       },
     },
-    
+
     notes: {
       type: String,
       maxlength: [1000, "Notes cannot exceed 1000 characters"],
