@@ -28,7 +28,6 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
 }) => {
   const [selectedTable, setSelectedTable] = useState<string>("");
 
-  // 🟢 useForm chuẩn TS
   const {
     register,
     handleSubmit,
@@ -41,8 +40,8 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
       name: "",
       email: "",
       phone: "",
-      date: "", // string, để rỗng
-      time: "12:00", // mặc định hợp lệ HH:MM
+      date: "",
+      time: "12:00",
       guests: "2",
       tableType: "",
       specialRequests: "",
@@ -50,7 +49,6 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
     mode: "onChange",
   });
 
-  // 🟢 Mutation tạo reservation
   const reservationMutation = useMutation({
     mutationFn: (payload: any) => createReservation(payload),
     onSuccess: () => {
@@ -96,38 +94,36 @@ const AddReservationPopup: React.FC<AddReservationPopupProps> = ({
     };
   }, []);
 
-  // 🔹 Click ra ngoài để đóng popup
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) setOpen(false);
-  };
-
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      onClick={handleBackdropClick}
+      className="fixed inset-0 z-50 flex md:items-center justify-center overflow-y-auto "
+      onClick={() => setOpen(false)}
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Popup */}
-      <div className="relative bg-black/30 backdrop-blur-sm border border-border/50 rounded-2xl shadow-2xl w-full max-w-6xl mx-4 p-8 z-10 animate-in zoom-in-95 duration-200">
+      <div
+        className="relative bg-black/30 backdrop-blur-sm border border-border/50 rounded-2xl shadow-2xl w-full max-w-6xl mx-4 p-6 md:p-8 z-10 animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()} // chặn click nổi bọt
+      >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 relative">
           <div className="flex items-center gap-3">
             <ChefHat className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-bold text-white">
               Reservation Details
             </h2>
           </div>
-          <button
+          <div
             onClick={() => setOpen(false)}
-            className="p-2 hover:text-red-500 hover:bg-gray-700/50 rounded-lg transition-all duration-200"
+            className="p-2  hover:bg-gray-700/50 rounded-lg transition-all duration-200 z-[100] cursor-pointer absolute top-0 right-0 "
           >
-            <X className="w-5 h-5 text-white" />
-          </button>
+            <X className="w-5 h-5 text-red-500" />
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <PersonalInfoSection register={register} errors={errors} />

@@ -54,7 +54,7 @@ const ReservationsManagement = () => {
           className="flex items-center gap-2 px-5 py-2 bg-[var(--primary)] text-black font-semibold rounded-lg shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200"
         >
           <Plus className="w-5 h-5" />
-          Add Reservation
+          <span className="hidden md:inline">Add Reservation</span>
         </button>
       </div>
 
