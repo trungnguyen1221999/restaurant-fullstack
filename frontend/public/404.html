@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 - Page Not Found</title>
     <script>
-      // Redirect to home if 404 occurs (fallback for client-side routing)
+      // Store the attempted URL and redirect to index.html for React Router
+      sessionStorage.setItem(
+        "redirectPath",
+        window.location.pathname + window.location.search
+      );
       window.location.href = "/";
     </script>
   </head>

@@ -99,9 +99,11 @@ Or update `frontend/.env.production` with your actual backend URL.
 ## 🐛 Troubleshooting
 
 **Build fails**: Check build logs in Render dashboard
-**CORS errors**: Verify FRONTEND_URL environment variable
+**CORS errors**: Verify FRONTEND_URL environment variable  
 **Database connection**: Check MONGODB_URI format and network access
 **Images not uploading**: Verify Cloudinary credentials
+**Routes show 404**: Ensure `_redirects` file exists in `frontend/public/` and gets copied to `dist/`
+**Admin routes redirect to homepage**: Check that `_redirects` contains `/* /index.html 200`
 
 ## 📝 Notes
 

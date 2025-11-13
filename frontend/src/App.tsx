@@ -4,15 +4,27 @@ import MenuDisplay from "./components/MenuDisplay";
 import NavBar from "./components/NavBar";
 import Contact from "./components/Contact";
 import AdminLoginPage from "./admin/adminLoginPage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import CategoryDisplay from "./components/CategoryDisplay";
 import CategoriesManagement from "./admin/components/CategoriesManagement";
 import AdminLayout from "./admin/adminDashboard";
 import DashboardOverview from "./admin/components/DashboardOverview";
 import MenuManagement from "./admin/components/MenuManagement";
 import ReservationsManagement from "./admin/components/ReservationsManagement";
+import { useEffect } from "react";
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Handle redirect from 404 page
+    const redirectPath = sessionStorage.getItem("redirectPath");
+    if (redirectPath) {
+      sessionStorage.removeItem("redirectPath");
+      navigate(redirectPath, { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <Routes>
       <Route path="/admin" element={<AdminLoginPage />} />

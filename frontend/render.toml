@@ -1,7 +1,10 @@
-# Render configuration for React Router
-# This file ensures all routes serve index.html for client-side routing
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+services:
+  - type: web
+    name: kai-restaurant-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
