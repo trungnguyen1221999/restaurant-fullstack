@@ -7,20 +7,21 @@
 - Ensure all code is committed and pushed to GitHub
 - Make sure both `build.sh` and `start.sh` are in the root directory
 
-### 2. Create Render Web Service
+### 2. Create Render Backend Web Service
 
 1. Go to [Render Dashboard](https://dashboard.render.com)
 2. Click "New +" → "Web Service"
 3. Connect your GitHub repository: `restaurant-fullstack`
 
-### 3. Configure Render Settings
+### 3. Configure Backend Settings
 
 ```
 Name: kai-restaurant-backend
 Environment: Node
 Branch: main
-Build Command: ./build.sh
-Start Command: ./start.sh
+Root Directory: backend
+Build Command: npm install
+Start Command: npm start
 ```
 
 ### 4. Environment Variables
@@ -39,24 +40,50 @@ CLOUDINARY_API_SECRET=your-api-secret
 ### 5. Frontend Deployment (Static Site)
 
 1. Create another Render service → "Static Site"
-2. Build Command: `npm run build:frontend`
-3. Publish Directory: `frontend/dist`
+2. Connect same GitHub repository: `restaurant-fullstack`
+3. Configure:
+   ```
+   Name: kai-restaurant-frontend
+   Branch: main
+   Root Directory: frontend
+   Build Command: npm install && npm run build
+   Publish Directory: dist
+   ```
 
-### 6. Update Frontend API URLs
+### 6. Configure Frontend Environment Variables
 
-After backend is deployed, update frontend API base URL:
+In Render frontend static site, set environment variable:
 
-```typescript
-// In frontend/src/api/config.ts or similar
-const API_BASE_URL = "https://your-backend-service.onrender.com/api";
 ```
+VITE_API_BASE_URL=https://restaurant-fullstack-yt2f.onrender.com/api
+```
+
+Or update `frontend/.env.production` with your actual backend URL.
 
 ## 🔧 Files Created for Deployment
 
-- `build.sh` - Builds both frontend and backend
-- `start.sh` - Starts the backend server
-- `.env.example` - Template for environment variables
+- `backend/.env.example` - Backend environment variables template
+- `frontend/.env.example` - Frontend environment variables template
+- `frontend/.env.production` - Production API URL configuration
+- `backend/server.js` - Updated to serve API only (no static files)
 - This deployment guide
+
+## 📚 Deployment Architecture
+
+```
+┌─────────────────┐    ┌──────────────────┐
+│  Frontend       │───▶│  Backend         │
+│  Static Site    │    │  Web Service     │
+│  (Render)       │    │  (Render)        │
+└─────────────────┘    └──────────────────┘
+        │                        │
+        └──────────┬─────────────┘
+                   ▼
+          ┌─────────────────┐
+          │  MongoDB Atlas  │
+          │  Database       │
+          └─────────────────┘
+```
 
 ## ✅ Deployment Checklist
 

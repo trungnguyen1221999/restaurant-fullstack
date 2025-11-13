@@ -58,21 +58,6 @@ app.use("/api/menu", menuRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/categories", categoryRoutes);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../frontend/dist");
-  app.use(express.static(frontendPath));
-
-  // SPA fallback for React Router
-  app.use((req, res, next) => {
-    if (!req.path.startsWith("/api")) {
-      res.sendFile(path.join(frontendPath, "index.html"));
-    } else {
-      next();
-    }
-  });
-}
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("❌ Error:", err.stack || err);
