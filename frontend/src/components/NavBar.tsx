@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   Menu,
-  Calendar,
   Phone,
   ChefHat,
   X,
@@ -91,7 +90,6 @@ const NavBar = () => {
                 </div>
               </div>
 
-
               {/* CTA Button */}
               <a
                 href="#book"
@@ -164,7 +162,6 @@ const NavBar = () => {
 
             {/* Mobile CTA */}
             <div className="mt-6 space-y-3">
-             
               <a
                 href="tel:+123456789"
                 className="w-full bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold py-3 rounded-full transition-all duration-300 flex items-center justify-center gap-2"
