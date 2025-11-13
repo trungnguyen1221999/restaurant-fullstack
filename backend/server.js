@@ -4,29 +4,29 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./config/database.js";
+import cloudinaryConfig from "./config/cloudinary.js";
 
-// Import routes
+// Routes
 import menuRoutes from "./routes/menuRoutes.js";
 import reservationRoutes from "./routes/reservationRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
-import cloudinaryConfig from "./config/cloudinary.js";
 
 // Load environment variables
 dotenv.config();
 
-// Express app setup
+// Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Current directory setup
+// Current directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS middleware: allow localhost and any frontend on Render
+// CORS middleware: allow localhost and Render frontend
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow non-browser requests (curl, Postman)
+      if (!origin) return callback(null, true); // allow non-browser requests
       if (
         origin.includes("localhost") ||
         origin.includes("onrender.com") ||
@@ -44,7 +44,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Basic route
+// Basic API info route
 app.get("/api", (req, res) => {
   res.json({
     message: "KAI Restaurant API Server",
@@ -53,7 +53,7 @@ app.get("/api", (req, res) => {
   });
 });
 
-// API Routes
+// API routes
 app.use("/api/menu", menuRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -64,8 +64,12 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(frontendPath));
 
   // SPA fallback for React Router
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
+  app.use((req, res, next) => {
+    if (!req.path.startsWith("/api")) {
+      res.sendFile(path.join(frontendPath, "index.html"));
+    } else {
+      next();
+    }
   });
 }
 
@@ -81,8 +85,8 @@ app.use((err, req, res, next) => {
 // Start server
 const startServer = async () => {
   try {
-    await connectDB();
-    cloudinaryConfig();
+    await connectDB(); // connect to MongoDB
+    cloudinaryConfig(); // initialize Cloudinary
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🌐 API: http://localhost:${PORT}/api`);
