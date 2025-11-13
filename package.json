@@ -1,0 +1,19 @@
+{
+  "name": "kai-restaurant-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fullstack KAI Restaurant App (Frontend + Backend)",
+  "scripts": {
+    "postinstall": "npm install --prefix backend && npm install --prefix frontend",
+    "start": "npm run start --prefix backend",
+    "build": "npm run build --prefix frontend",
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
