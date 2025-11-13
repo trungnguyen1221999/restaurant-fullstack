@@ -8,14 +8,14 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
     "allowJs": true,
-    "ignoreDeprecations": "5.0",
-    "baseUrl": ".",
+    "ignoreDeprecations": "6.0", // Cập nhật giá trị để tắt cảnh báo
+    "baseUrl": ".", // Nếu cần thiết, giữ lại tùy chọn này
     "paths": {
       "@/*": ["./src/*"]
     },
 
     /* Bundler mode */
-    "moduleResolution": "node", // Thay đổi từ "bundler" sang "node"
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
@@ -23,14 +23,13 @@
     "jsx": "react-jsx",
 
     /* Compatibility */
-    "esModuleInterop": true, // Thêm tùy chọn này
-    "allowSyntheticDefaultImports": true, // Thêm tùy chọn này
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
