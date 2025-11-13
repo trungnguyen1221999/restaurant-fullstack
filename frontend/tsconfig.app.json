@@ -8,8 +8,6 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
     "allowJs": true,
-    "ignoreDeprecations": "6.0", // Cập nhật giá trị để tắt cảnh báo
-    "baseUrl": ".", // Nếu cần thiết, giữ lại tùy chọn này
     "paths": {
       "@/*": ["./src/*"]
     },
