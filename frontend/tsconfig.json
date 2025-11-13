@@ -9,10 +9,16 @@
     }
   ],
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["src/*"]
+    },
+    "composite": true, // Bắt buộc khi sử dụng project references
+    "skipLibCheck": true, // Bỏ qua kiểm tra type trong thư viện để tăng tốc
+    "strict": true, // Bật chế độ kiểm tra nghiêm ngặt
+    "moduleResolution": "node", // Sử dụng module resolution kiểu Node.js
+    "target": "ESNext", // Mục tiêu biên dịch
+    "module": "ESNext", // Sử dụng module ESNext
+    "lib": ["ESNext", "DOM"] // Bao gồm các thư viện cần thiết
   }
 }
