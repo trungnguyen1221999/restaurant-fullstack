@@ -50,6 +50,8 @@ CLOUDINARY_API_SECRET=your-api-secret
    Publish Directory: dist
    ```
 
+**Important**: The `_redirects` file in `frontend/public/` is crucial for React Router to work on Render. It ensures all routes serve `index.html`.
+
 ### 6. Configure Frontend Environment Variables
 
 In Render frontend static site, set environment variable:

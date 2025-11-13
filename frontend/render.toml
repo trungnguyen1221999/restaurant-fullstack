@@ -1,0 +1,7 @@
+# Render configuration for React Router
+# This file ensures all routes serve index.html for client-side routing
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

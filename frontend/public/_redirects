@@ -1,0 +1,4 @@
+# Redirect rules for React Router (client-side routing)
+# This tells Render to serve index.html for all routes that don't match static files
+
+/*    /index.html   200
