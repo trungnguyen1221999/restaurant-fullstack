@@ -17,11 +17,14 @@ import { PersonalInfoSection } from "./booking/PersonalInfoSection";
 import { BookingDetailsSection } from "./booking/BookingDetailsSection";
 import { SpecialRequestsSection } from "./booking/SpecialRequestsSection";
 import { TableSelectionSection } from "./booking/TableSelectionSection";
+import ReservationSuccessPopup from "./booking/ReservationSuccessPopup";
 
 import { createReservation } from "@/api/reservation.api";
 
 const BookForm = () => {
   const [selectedTable, setSelectedTable] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [reservationDetails, setReservationDetails] = useState<any>(null);
 
   const {
     register,
@@ -46,10 +49,19 @@ const BookForm = () => {
 
   const reservationMutation = useMutation({
     mutationFn: async (payload: any) => await createReservation(payload),
-    onSuccess: () => {
-      toast.success("Reservation submitted successfully!");
-      reset();
-      setSelectedTable("");
+    onSuccess: (_, variables) => {
+      // Store reservation details for the popup
+      setReservationDetails({
+        name: variables.customerInfo.name,
+        email: variables.customerInfo.email,
+        phone: variables.customerInfo.phone,
+        date: variables.reservationDetails.date,
+        time: variables.reservationDetails.time,
+        guests: variables.reservationDetails.guests,
+        tablePreference: variables.reservationDetails.tablePreference,
+        notes: variables.notes,
+      });
+      setShowSuccessPopup(true);
     },
     onError: (err: any) => {
       toast.error("Failed to submit reservation: " + err.message);
@@ -66,6 +78,13 @@ const BookForm = () => {
         | "Premium Booth",
       { shouldValidate: true }
     );
+  };
+
+  const handleCloseSuccessPopup = () => {
+    setShowSuccessPopup(false);
+    setReservationDetails(null);
+    reset();
+    setSelectedTable("");
   };
 
   const onSubmit = (data: ReservationFormData) => {
@@ -149,6 +168,15 @@ const BookForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && reservationDetails && (
+        <ReservationSuccessPopup
+          isOpen={showSuccessPopup}
+          onClose={handleCloseSuccessPopup}
+          reservationDetails={reservationDetails}
+        />
+      )}
     </section>
   );
 };
