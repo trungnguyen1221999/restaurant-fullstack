@@ -2,9 +2,11 @@
 
 A full-stack restaurant management and booking system with a modern UI and complete admin dashboard.
 
-**🔗 Live Preview:** [https://restaurant-fullstack-1.onrender.com/]
-**🔗 Backend API:** https://restaurant-fullstack-5l2q.onrender.com/api
+🔗 Live Preview: https://restaurant-fullstack-1.onrender.com/
 
+🔗 Backend API: https://restaurant-fullstack-5l2q.onrender.com/api
+
+Note: Since I’m using free hosting, you need to open both the frontend and backend links to see the data properly.
 <p align="center">
   <img src="https://i.imgur.com/S1GAipC.jpeg.png" alt="" width="1000"/>
   <img src="https://i.imgur.com/QU22C14.png" alt="" width="1000"/>
